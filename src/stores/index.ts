@@ -7,3 +7,4 @@ export const pinia = createPinia()
 export * from './auth'
 export * from './app'
 export * from './pillar'
+export * from './resource'
