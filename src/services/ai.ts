@@ -11,6 +11,14 @@ export interface SummaryResult {
   advice: string
 }
 
+export interface ContentGenerationResult {
+  title: string
+  content: string
+  hook?: string
+  keywords?: string
+  visual_description?: string
+}
+
 /**
  * Call the Contento API for AI completions
  */
@@ -269,6 +277,114 @@ export async function pdfToText(pdfBase64: string, filename: string): Promise<AI
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to convert PDF to text',
+    }
+  }
+}
+
+/**
+ * Generate content from pillar resources
+ */
+export async function generateContent(
+  contentType: string,
+  pillarTitle: string,
+  resources: string[],
+  userInstructions?: string
+): Promise<AIServiceResult<ContentGenerationResult>> {
+  const resourcesText = resources.join('\n\n---RESOURCE---\n\n')
+
+  const contentTypePrompts: Record<string, string> = {
+    linkedin: `Create a professional LinkedIn post that:
+- Has an attention-grabbing first line (hook)
+- Is 150-300 words
+- Uses line breaks for readability
+- Includes 3-5 relevant hashtags at the end
+- Is professional yet conversational
+- Provides value and insights`,
+
+    twitter: `Create an engaging Twitter thread that:
+- Starts with a compelling hook tweet
+- Contains 3-5 tweets total
+- Each tweet is under 280 characters
+- Uses strategic line breaks
+- Includes relevant hashtags
+- Ends with a call-to-action`,
+
+    blog: `Create a comprehensive blog post that:
+- Has an SEO-friendly title
+- Includes an introduction, main body with sections, and conclusion
+- Is 500-800 words
+- Uses clear headings and structure
+- Provides actionable insights
+- Is optimized for engagement`,
+
+    instagram: `Create an Instagram caption that:
+- Starts with an attention-grabbing first line
+- Is 100-200 words
+- Uses line breaks and emojis strategically
+- Includes 10-15 relevant hashtags
+- Ends with a question or call-to-action
+- Suggests a visual concept`,
+
+    email: `Create an email newsletter that:
+- Has a compelling subject line
+- Includes a clear opening, body, and closing
+- Is 200-400 words
+- Uses short paragraphs for scannability
+- Includes a clear call-to-action
+- Has a professional yet friendly tone`
+  }
+
+  const typeInstructions = contentTypePrompts[contentType] || contentTypePrompts['linkedin']
+
+  const prompt = `You are an expert content creator. Create engaging ${contentType} content for the pillar "${pillarTitle}" using the following resources.
+
+${typeInstructions}
+
+Additional Instructions: ${userInstructions || 'None'}
+
+Resources:
+${resourcesText}
+
+Respond in JSON format with this structure:
+{
+  "title": "<engaging title or subject line>",
+  "content": "<the main content text>",
+  "hook": "<optional: the opening hook or first sentence>",
+  "keywords": "<optional: comma-separated relevant keywords>",
+  "visual_description": "<optional: description of suggested visual/image>"
+}`
+
+  try {
+    const result = await callAPI({
+      prompt,
+      json_format: true,
+      temperature: 0.8,
+      max_tokens: 2000,
+    })
+
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'No data returned')
+    }
+
+    const parsed = typeof result.data === 'string'
+      ? JSON.parse(result.data)
+      : result.data
+
+    return {
+      success: true,
+      data: {
+        title: parsed.title || `${contentType.charAt(0).toUpperCase() + contentType.slice(1)} Post`,
+        content: parsed.content || '',
+        hook: parsed.hook,
+        keywords: parsed.keywords,
+        visual_description: parsed.visual_description,
+      },
+    }
+  } catch (err) {
+    console.error('Error generating content:', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to generate content',
     }
   }
 }

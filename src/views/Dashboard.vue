@@ -93,12 +93,16 @@
           </div>
           <!-- Content Tab -->
           <div v-if="activeTab === 'content'">
-            <div class="text-center py-12">
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">Content Library</h2>
-              <p class="text-gray-600">
-                View and manage all your generated content.
-              </p>
-            </div>
+            <ContentList
+              :contents="contentStore.sortedContents"
+              :loading="contentStore.loading"
+              :error="contentStore.error"
+              @generate="showGenerateModal = true"
+              @view="handleViewContent"
+              @edit="handleEditContent"
+              @delete="handleDeleteContent"
+              @retry="loadContents"
+            />
           </div>
 
           <!-- Settings Tab -->
@@ -183,6 +187,25 @@
       @submit="handleAddAudioResource"
       @close="handleCloseAddAudioModal"
     />
+
+    <!-- Content Modals -->
+    <GenerateContentModal
+      v-model="showGenerateModal"
+      :pillars="pillarStore.pillars"
+      :selected-pillar="pillarStore.currentPillar"
+      :loading="generateLoading"
+      :error="generateError"
+      @submit="handleGenerateContent"
+      @close="handleCloseGenerateModal"
+      @pillar-change="handleGenerateModalPillarChange"
+      ref="generateModalRef"
+    />
+
+    <ViewContentModal
+      v-model="showViewModal"
+      :content="contentToView"
+      @close="handleCloseViewModal"
+    />
   </div>
 </template>
 
@@ -193,6 +216,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { usePillarStore } from '@/stores/pillar'
 import { useResourceStore } from '@/stores/resource'
+import { useContentStore } from '@/stores/content'
 import PillarList from '@/components/pillars/PillarList.vue'
 import CreatePillarModal from '@/components/pillars/CreatePillarModal.vue'
 import EditPillarModal from '@/components/pillars/EditPillarModal.vue'
@@ -202,16 +226,21 @@ import AddTextModal from '@/components/resources/AddTextModal.vue'
 import AddURLModal from '@/components/resources/AddURLModal.vue'
 import AddPDFModal from '@/components/resources/AddPDFModal.vue'
 import AddAudioModal from '@/components/resources/AddAudioModal.vue'
+import ContentList from '@/components/content/ContentList.vue'
+import GenerateContentModal from '@/components/content/GenerateContentModal.vue'
+import ViewContentModal from '@/components/content/ViewContentModal.vue'
 import * as pillarService from '@/services/pillar'
 import * as resourceService from '@/services/resource'
+import * as contentService from '@/services/content'
 import * as aiService from '@/services/ai'
-import type { Pillar, Resource } from '@/lib/supabase'
+import type { Pillar, Resource, Content } from '@/lib/supabase'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 const pillarStore = usePillarStore()
 const resourceStore = useResourceStore()
+const contentStore = useContentStore()
 
 const activeTab = ref('pillars')
 
@@ -242,6 +271,20 @@ const showAddAudioModal = ref(false)
 const addResourceLoading = ref(false)
 const addResourceError = ref<string | null>(null)
 
+// Content modal states
+const showGenerateModal = ref(false)
+const showViewModal = ref(false)
+
+// Content loading and error states
+const generateLoading = ref(false)
+const generateError = ref<string | null>(null)
+
+// Content being viewed/edited
+const contentToView = ref<Content | null>(null)
+
+// Generate modal ref
+const generateModalRef = ref<InstanceType<typeof GenerateContentModal> | null>(null)
+
 const tabs = computed(() => {
   const baseTabs = [
     { id: 'pillars', label: 'Pillars' },
@@ -263,9 +306,10 @@ const currentPillarResources = computed(() => {
   return resourceStore.getResourcesByPillar(pillarStore.currentPillar.id)
 })
 
-// Load pillars and resources on mount
+// Load pillars, resources, and content on mount
 onMounted(async () => {
   await loadPillars()
+  await loadContents()
   // If there's a selected pillar (e.g., from page refresh), load its resources
   if (pillarStore.currentPillar) {
     await loadResources()
@@ -669,12 +713,140 @@ function handleCloseAddAudioModal() {
   addResourceError.value = null
 }
 
+// Content management functions
+async function loadContents() {
+  if (!authStore.userId) return
+
+  contentStore.setLoading(true)
+  contentStore.setError(null)
+
+  const result = await contentService.fetchContents(authStore.userId)
+
+  if (result.success && result.data) {
+    contentStore.setContents(result.data)
+  } else {
+    contentStore.setError(result.error || 'Failed to load content')
+  }
+
+  contentStore.setLoading(false)
+}
+
+async function handleGenerateContent(data: {
+  pillarId: string
+  contentType: string
+  instructions: string
+}) {
+  if (!authStore.userId) return
+
+  generateLoading.value = true
+  generateError.value = null
+
+  // Get the pillar
+  const pillar = pillarStore.pillars.find(p => p.id === data.pillarId)
+  if (!pillar) {
+    generateError.value = 'Pillar not found'
+    generateLoading.value = false
+    return
+  }
+
+  // Get resources for this pillar
+  const resources = resourceStore.getResourcesByPillar(data.pillarId)
+  const resourceContents = resources.map(r => r.content)
+
+  if (resourceContents.length === 0) {
+    generateError.value = 'This pillar has no resources. Add resources first to generate quality content.'
+    generateLoading.value = false
+    return
+  }
+
+  // Generate content using AI
+  const generationResult = await aiService.generateContent(
+    data.contentType,
+    pillar.title,
+    resourceContents,
+    data.instructions
+  )
+
+  if (!generationResult.success || !generationResult.data) {
+    generateError.value = generationResult.error || 'Failed to generate content'
+    generateLoading.value = false
+    return
+  }
+
+  // Create the content
+  const result = await contentService.createContent({
+    pillar_id: data.pillarId,
+    user_id: authStore.userId,
+    type: data.contentType,
+    title: generationResult.data.title,
+    content: generationResult.data.content,
+    hook: generationResult.data.hook,
+    keywords: generationResult.data.keywords,
+    visual_description: generationResult.data.visual_description
+  })
+
+  if (result.success && result.data) {
+    contentStore.addContent(result.data)
+    showGenerateModal.value = false
+    generateError.value = null
+
+    // Switch to content tab to show the new content
+    activeTab.value = 'content'
+    appStore.setDefaultTab('content')
+  } else {
+    generateError.value = result.error || 'Failed to save content'
+  }
+
+  generateLoading.value = false
+}
+
+function handleViewContent(content: Content) {
+  contentToView.value = content
+  showViewModal.value = true
+}
+
+function handleEditContent(content: Content) {
+  // TODO: Implement edit functionality in a future phase
+  console.log('Edit content:', content)
+}
+
+async function handleDeleteContent(content: Content) {
+  if (!confirm(`Are you sure you want to delete "${content.title}"?`)) return
+
+  const result = await contentService.deleteContent(content.id)
+
+  if (result.success) {
+    contentStore.removeContent(content.id)
+  } else {
+    alert(result.error || 'Failed to delete content')
+  }
+}
+
+async function handleGenerateModalPillarChange(pillarId: string) {
+  // Update resource count in the generate modal
+  const resources = resourceStore.getResourcesByPillar(pillarId)
+  if (generateModalRef.value) {
+    generateModalRef.value.setResourceCount(resources.length)
+  }
+}
+
+function handleCloseGenerateModal() {
+  showGenerateModal.value = false
+  generateError.value = null
+}
+
+function handleCloseViewModal() {
+  showViewModal.value = false
+  contentToView.value = null
+}
+
 async function handleLogout() {
   const result = await authStore.signOut()
   if (result.success) {
     appStore.reset()
     pillarStore.reset()
     resourceStore.reset()
+    contentStore.reset()
     router.push('/login')
   }
 }
