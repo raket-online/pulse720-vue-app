@@ -107,21 +107,78 @@
 
           <!-- Settings Tab -->
           <div v-if="activeTab === 'settings'">
-            <div class="text-center py-12">
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">Settings</h2>
-              <p class="text-gray-600">
-                Configure your company profile and branding.
-              </p>
-            </div>
+            <UserProfile
+              :user-id="authStore.userId || ''"
+              :profile="appStore.userProfile"
+              :superuser="appStore.superuser"
+              :loading="profileLoading"
+              :error="profileError"
+              :success="profileSuccess"
+              @submit="handleUpdateProfile"
+            />
           </div>
 
           <!-- Debug Tab (only for superusers) -->
           <div v-if="activeTab === 'debug' && appStore.superuser">
-            <div class="text-center py-12">
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">Debug</h2>
-              <p class="text-gray-600">
-                Development and debugging tools.
-              </p>
+            <div class="max-w-6xl mx-auto">
+              <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Debug Information</h2>
+
+                <!-- Store States -->
+                <div class="space-y-6">
+                  <!-- Auth Store -->
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Authentication</h3>
+                    <div class="bg-gray-50 rounded p-4 font-mono text-sm">
+                      <p><strong>User ID:</strong> {{ authStore.userId }}</p>
+                      <p><strong>Session:</strong> {{ authStore.session ? 'Active' : 'None' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Pillar Store -->
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Pillars</h3>
+                    <div class="bg-gray-50 rounded p-4 font-mono text-sm">
+                      <p><strong>Total:</strong> {{ pillarStore.pillars.length }}</p>
+                      <p><strong>Current:</strong> {{ pillarStore.currentPillar?.title || 'None' }}</p>
+                      <p><strong>Loading:</strong> {{ pillarStore.loading }}</p>
+                      <p><strong>Error:</strong> {{ pillarStore.error || 'None' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Resource Store -->
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Resources</h3>
+                    <div class="bg-gray-50 rounded p-4 font-mono text-sm">
+                      <p><strong>Total:</strong> {{ resourceStore.resources.length }}</p>
+                      <p><strong>Current Pillar:</strong> {{ currentPillarResources.length }}</p>
+                      <p><strong>Loading:</strong> {{ resourceStore.loading }}</p>
+                      <p><strong>Error:</strong> {{ resourceStore.error || 'None' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Content Store -->
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Content</h3>
+                    <div class="bg-gray-50 rounded p-4 font-mono text-sm">
+                      <p><strong>Total:</strong> {{ contentStore.contents.length }}</p>
+                      <p><strong>Loading:</strong> {{ contentStore.loading }}</p>
+                      <p><strong>Error:</strong> {{ contentStore.error || 'None' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- App Store -->
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">App Settings</h3>
+                    <div class="bg-gray-50 rounded p-4 font-mono text-sm">
+                      <p><strong>Superuser:</strong> {{ appStore.superuser }}</p>
+                      <p><strong>Default Tab:</strong> {{ appStore.defaultTab }}</p>
+                      <p><strong>Company:</strong> {{ appStore.settings.company_name || 'Not set' }}</p>
+                      <p><strong>Language:</strong> {{ appStore.settings.output_language || 'Not set' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -138,12 +195,12 @@
     />
 
     <EditPillarModal
-      v-model="showEditModal"
+      v-model="showEditPillarModal"
       :pillar="pillarToEdit"
       :loading="editLoading"
       :error="editError"
       @submit="handleUpdatePillar"
-      @close="handleCloseEditModal"
+      @close="handleCloseEditPillarModal"
     />
 
     <DeleteConfirmationModal
@@ -206,6 +263,15 @@
       :content="contentToView"
       @close="handleCloseViewModal"
     />
+
+    <EditContentModal
+      v-model="showEditModal"
+      :content="contentToEdit"
+      :loading="editContentLoading"
+      :error="editContentError"
+      @submit="handleSubmitEditContent"
+      @close="handleCloseEditModal"
+    />
   </div>
 </template>
 
@@ -229,9 +295,12 @@ import AddAudioModal from '@/components/resources/AddAudioModal.vue'
 import ContentList from '@/components/content/ContentList.vue'
 import GenerateContentModal from '@/components/content/GenerateContentModal.vue'
 import ViewContentModal from '@/components/content/ViewContentModal.vue'
+import EditContentModal from '@/components/content/EditContentModal.vue'
+import UserProfile from '@/components/settings/UserProfile.vue'
 import * as pillarService from '@/services/pillar'
 import * as resourceService from '@/services/resource'
 import * as contentService from '@/services/content'
+import * as userProfileService from '@/services/userProfile'
 import * as aiService from '@/services/ai'
 import type { Pillar, Resource, Content } from '@/lib/supabase'
 
@@ -244,12 +313,12 @@ const contentStore = useContentStore()
 
 const activeTab = ref('pillars')
 
-// Modal states
+// Pillar modal states
 const showCreateModal = ref(false)
-const showEditModal = ref(false)
+const showEditPillarModal = ref(false)
 const showDeleteModal = ref(false)
 
-// Loading and error states
+// Pillar loading and error states
 const createLoading = ref(false)
 const createError = ref<string | null>(null)
 const editLoading = ref(false)
@@ -274,13 +343,22 @@ const addResourceError = ref<string | null>(null)
 // Content modal states
 const showGenerateModal = ref(false)
 const showViewModal = ref(false)
+const showEditModal = ref(false)
 
 // Content loading and error states
 const generateLoading = ref(false)
 const generateError = ref<string | null>(null)
+const editContentLoading = ref(false)
+const editContentError = ref<string | null>(null)
 
 // Content being viewed/edited
 const contentToView = ref<Content | null>(null)
+const contentToEdit = ref<Content | null>(null)
+
+// Profile states
+const profileLoading = ref(false)
+const profileError = ref<string | null>(null)
+const profileSuccess = ref(false)
 
 // Generate modal ref
 const generateModalRef = ref<InstanceType<typeof GenerateContentModal> | null>(null)
@@ -306,10 +384,13 @@ const currentPillarResources = computed(() => {
   return resourceStore.getResourcesByPillar(pillarStore.currentPillar.id)
 })
 
-// Load pillars, resources, and content on mount
+// Load pillars, resources, content, and profile on mount
 onMounted(async () => {
-  await loadPillars()
-  await loadContents()
+  await Promise.all([
+    loadPillars(),
+    loadContents(),
+    loadUserProfile()
+  ])
   // If there's a selected pillar (e.g., from page refresh), load its resources
   if (pillarStore.currentPillar) {
     await loadResources()
@@ -351,7 +432,7 @@ async function handleSelectPillar(pillar: Pillar) {
 function handleEditPillar(pillar: Pillar) {
   pillarToEdit.value = pillar
   editError.value = null
-  showEditModal.value = true
+  showEditPillarModal.value = true
 }
 
 function handleDeletePillar(pillar: Pillar) {
@@ -429,8 +510,8 @@ function handleCloseCreateModal() {
   createError.value = null
 }
 
-function handleCloseEditModal() {
-  showEditModal.value = false
+function handleCloseEditPillarModal() {
+  showEditPillarModal.value = false
   editError.value = null
   pillarToEdit.value = null
 }
@@ -806,8 +887,39 @@ function handleViewContent(content: Content) {
 }
 
 function handleEditContent(content: Content) {
-  // TODO: Implement edit functionality in a future phase
-  console.log('Edit content:', content)
+  contentToEdit.value = content
+  showEditModal.value = true
+}
+
+async function handleSubmitEditContent(data: {
+  title: string
+  content: string
+  hook?: string
+  keywords?: string
+  visual_description?: string
+}) {
+  if (!contentToEdit.value) return
+
+  editContentLoading.value = true
+  editContentError.value = null
+
+  const result = await contentService.updateContent(contentToEdit.value.id, data)
+
+  if (result.success && result.data) {
+    contentStore.updateContent(contentToEdit.value.id, result.data)
+    showEditModal.value = false
+    contentToEdit.value = null
+  } else {
+    editContentError.value = result.error || 'Failed to update content'
+  }
+
+  editContentLoading.value = false
+}
+
+function handleCloseEditModal() {
+  showEditModal.value = false
+  editContentError.value = null
+  contentToEdit.value = null
 }
 
 async function handleDeleteContent(content: Content) {
@@ -838,6 +950,51 @@ function handleCloseGenerateModal() {
 function handleCloseViewModal() {
   showViewModal.value = false
   contentToView.value = null
+}
+
+// User profile management functions
+async function loadUserProfile() {
+  if (!authStore.userId) return
+
+  const result = await userProfileService.fetchUserProfile(authStore.userId)
+
+  if (result.success && result.data) {
+    appStore.setUserProfile(result.data)
+  } else if (result.error?.includes('No rows')) {
+    // Profile doesn't exist yet, create it
+    const createResult = await userProfileService.createUserProfile(authStore.userId)
+    if (createResult.success && createResult.data) {
+      appStore.setUserProfile(createResult.data)
+    }
+  }
+}
+
+async function handleUpdateProfile(updates: {
+  company_name?: string
+  company_website?: string
+  logo_url?: string
+  target_audience?: string
+  output_language?: string
+}) {
+  if (!authStore.userId) return
+
+  profileLoading.value = true
+  profileError.value = null
+  profileSuccess.value = false
+
+  const result = await userProfileService.updateUserProfile(authStore.userId, updates)
+
+  if (result.success && result.data) {
+    appStore.setUserProfile(result.data)
+    profileSuccess.value = true
+    setTimeout(() => {
+      profileSuccess.value = false
+    }, 3000)
+  } else {
+    profileError.value = result.error || 'Failed to update profile'
+  }
+
+  profileLoading.value = false
 }
 
 async function handleLogout() {

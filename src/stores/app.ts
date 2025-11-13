@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { UserProfile } from '@/lib/supabase'
 
 // Types
 export interface Settings {
@@ -28,6 +29,7 @@ export const useAppStore = defineStore('app', () => {
   const settings = ref<Settings>({})
   const superuser = ref<boolean>(false)
   const isFirstLoginFlow = ref<boolean>(false)
+  const userProfile = ref<UserProfile | null>(null)
 
   // Content editing state
   const currentContent = ref<{
@@ -65,6 +67,20 @@ export const useAppStore = defineStore('app', () => {
     superuser.value = isSuperuser
   }
 
+  function setUserProfile(profile: UserProfile | null) {
+    userProfile.value = profile
+    if (profile) {
+      superuser.value = profile.superuser || false
+      settings.value = {
+        company_name: profile.company_name || undefined,
+        company_website: profile.company_website || undefined,
+        target_audience: profile.target_audience || undefined,
+        output_language: profile.output_language || undefined,
+        logo_url: profile.logo_url || undefined
+      }
+    }
+  }
+
   function setCurrentContent(content: Partial<typeof currentContent.value>) {
     currentContent.value = { ...currentContent.value, ...content }
   }
@@ -78,6 +94,7 @@ export const useAppStore = defineStore('app', () => {
     defaultTab.value = 'pillars'
     settings.value = {}
     superuser.value = false
+    userProfile.value = null
     currentContent.value = {}
     buttonLoading.value = false
     isGeneratingImage.value = false
@@ -90,6 +107,7 @@ export const useAppStore = defineStore('app', () => {
     settings,
     superuser,
     isFirstLoginFlow,
+    userProfile,
     currentContent,
     buttonLoading,
     isGeneratingImage,
@@ -98,6 +116,7 @@ export const useAppStore = defineStore('app', () => {
     setDefaultTab,
     setSettings,
     setSuperuser,
+    setUserProfile,
     setCurrentContent,
     clearCurrentContent,
     reset,
