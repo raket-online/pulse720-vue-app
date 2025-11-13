@@ -116,3 +116,12 @@ export interface Database {
     }
   }
 }
+
+// Convenience type exports
+export type Pillar = Database['public']['Tables']['pillars']['Row']
+export type PillarInsert = Database['public']['Tables']['pillars']['Insert']
+export type PillarUpdate = Database['public']['Tables']['pillars']['Update']
+export type Resource = Database['public']['Tables']['resources']['Row']
+export type Content = Database['public']['Tables']['content']['Row']
+export type ContentSchedule = Database['public']['Tables']['content_schedule']['Row']
+export type UserProfile = Database['public']['Tables']['users_profile']['Row']
