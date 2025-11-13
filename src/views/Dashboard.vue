@@ -97,25 +97,39 @@
               :contents="contentStore.sortedContents"
               :loading="contentStore.loading"
               :error="contentStore.error"
+              :can-post-to-linked-in="canPostToLinkedIn"
               @generate="showGenerateModal = true"
               @view="handleViewContent"
               @edit="handleEditContent"
               @delete="handleDeleteContent"
+              @post-to-linked-in="handlePostToLinkedIn"
               @retry="loadContents"
             />
           </div>
 
           <!-- Settings Tab -->
           <div v-if="activeTab === 'settings'">
-            <UserProfile
-              :user-id="authStore.userId || ''"
-              :profile="appStore.userProfile"
-              :superuser="appStore.superuser"
-              :loading="profileLoading"
-              :error="profileError"
-              :success="profileSuccess"
-              @submit="handleUpdateProfile"
-            />
+            <div class="space-y-6">
+              <UserProfile
+                :user-id="authStore.userId || ''"
+                :profile="appStore.userProfile"
+                :superuser="appStore.superuser"
+                :loading="profileLoading"
+                :error="profileError"
+                :success="profileSuccess"
+                @submit="handleUpdateProfile"
+              />
+
+              <LinkedInConnection
+                :user-id="authStore.userId || ''"
+                :linked-in-profile="linkedInProfile"
+                :loading="linkedInLoading"
+                :error="linkedInError"
+                :success="linkedInSuccess"
+                @connect="handleLinkedInConnect"
+                @disconnect="handleLinkedInDisconnect"
+              />
+            </div>
           </div>
 
           <!-- Debug Tab (only for superusers) -->
@@ -297,12 +311,15 @@ import GenerateContentModal from '@/components/content/GenerateContentModal.vue'
 import ViewContentModal from '@/components/content/ViewContentModal.vue'
 import EditContentModal from '@/components/content/EditContentModal.vue'
 import UserProfile from '@/components/settings/UserProfile.vue'
+import LinkedInConnection from '@/components/settings/LinkedInConnection.vue'
 import * as pillarService from '@/services/pillar'
 import * as resourceService from '@/services/resource'
 import * as contentService from '@/services/content'
 import * as userProfileService from '@/services/userProfile'
+import * as linkedInService from '@/services/linkedin'
 import * as aiService from '@/services/ai'
 import type { Pillar, Resource, Content } from '@/lib/supabase'
+import type { LinkedInProfile } from '@/services/linkedin'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -360,6 +377,12 @@ const profileLoading = ref(false)
 const profileError = ref<string | null>(null)
 const profileSuccess = ref(false)
 
+// LinkedIn states
+const linkedInProfile = ref<LinkedInProfile | null>(null)
+const linkedInLoading = ref(false)
+const linkedInError = ref<string | null>(null)
+const linkedInSuccess = ref<string | null>(null)
+
 // Generate modal ref
 const generateModalRef = ref<InstanceType<typeof GenerateContentModal> | null>(null)
 
@@ -384,12 +407,24 @@ const currentPillarResources = computed(() => {
   return resourceStore.getResourcesByPillar(pillarStore.currentPillar.id)
 })
 
-// Load pillars, resources, content, and profile on mount
+// Computed property for LinkedIn posting ability
+const canPostToLinkedIn = computed(() => {
+  if (!linkedInProfile.value) return false
+  if (!linkedInProfile.value.access_token) return false
+  if (!linkedInProfile.value.expires_at) return false
+
+  // Check if token is expired
+  const expiresAt = new Date(linkedInProfile.value.expires_at)
+  return expiresAt > new Date()
+})
+
+// Load pillars, resources, content, profile, and LinkedIn on mount
 onMounted(async () => {
   await Promise.all([
     loadPillars(),
     loadContents(),
-    loadUserProfile()
+    loadUserProfile(),
+    loadLinkedInProfile()
   ])
   // If there's a selected pillar (e.g., from page refresh), load its resources
   if (pillarStore.currentPillar) {
@@ -934,6 +969,40 @@ async function handleDeleteContent(content: Content) {
   }
 }
 
+async function handlePostToLinkedIn(content: Content) {
+  if (!linkedInProfile.value?.access_token) {
+    alert('Please connect your LinkedIn account in Settings first.')
+    return
+  }
+
+  if (!confirm(`Post "${content.title}" to LinkedIn?`)) return
+
+  // Check if token is expired
+  if (linkedInProfile.value.expires_at && linkedInService.isTokenExpired(linkedInProfile.value.expires_at)) {
+    alert('Your LinkedIn connection has expired. Please reconnect in Settings.')
+    return
+  }
+
+  try {
+    const result = await linkedInService.postToLinkedIn(
+      linkedInProfile.value.access_token,
+      {
+        text: content.content,
+        visibility: 'PUBLIC'
+      }
+    )
+
+    if (result.success && result.data) {
+      alert(`Successfully posted to LinkedIn!\n\nYou can view it here:\n${result.data.url}`)
+    } else {
+      alert(`Failed to post to LinkedIn: ${result.error || 'Unknown error'}`)
+    }
+  } catch (err) {
+    console.error('LinkedIn post error:', err)
+    alert(`Failed to post to LinkedIn: ${err instanceof Error ? err.message : 'Unknown error'}`)
+  }
+}
+
 async function handleGenerateModalPillarChange(pillarId: string) {
   // Update resource count in the generate modal
   const resources = resourceStore.getResourcesByPillar(pillarId)
@@ -995,6 +1064,123 @@ async function handleUpdateProfile(updates: {
   }
 
   profileLoading.value = false
+}
+
+// LinkedIn management functions
+async function loadLinkedInProfile() {
+  if (!authStore.userId) return
+
+  const result = await linkedInService.getStoredLinkedInProfile(authStore.userId)
+
+  if (result.success && result.data) {
+    linkedInProfile.value = result.data
+  }
+}
+
+function handleLinkedInConnect() {
+  if (!authStore.userId) return
+
+  linkedInLoading.value = true
+  linkedInError.value = null
+  linkedInSuccess.value = null
+
+  const redirectUri = import.meta.env.VITE_LINKEDIN_REDIRECT_URI || `${window.location.origin}/settings`
+  const authUrl = linkedInService.getLinkedInAuthUrl(authStore.userId, redirectUri)
+
+  if (!authUrl) {
+    linkedInError.value = 'LinkedIn Client ID not configured. Please add VITE_LINKEDIN_CLIENT_ID to your .env file.'
+    linkedInLoading.value = false
+    return
+  }
+
+  // Open LinkedIn OAuth in popup
+  const popup = window.open(authUrl, 'LinkedIn OAuth', 'width=600,height=700')
+
+  // Listen for OAuth callback
+  const handleMessage = async (event: MessageEvent) => {
+    if (event.data.type === 'linkedin-oauth-success') {
+      const { code } = event.data
+
+      // Exchange code for token
+      const tokenResult = await linkedInService.exchangeLinkedInCode(code, redirectUri)
+
+      if (!tokenResult.success || !tokenResult.data) {
+        linkedInError.value = tokenResult.error || 'Failed to connect LinkedIn'
+        linkedInLoading.value = false
+        return
+      }
+
+      // Get LinkedIn profile
+      const profileResult = await linkedInService.getLinkedInProfile(tokenResult.data.access_token)
+
+      if (!profileResult.success) {
+        linkedInError.value = profileResult.error || 'Failed to get LinkedIn profile'
+        linkedInLoading.value = false
+        return
+      }
+
+      // Save to database
+      const saveResult = await linkedInService.saveLinkedInProfile(
+        authStore.userId!,
+        tokenResult.data.access_token,
+        tokenResult.data.expires_in,
+        profileResult.data
+      )
+
+      if (saveResult.success) {
+        linkedInSuccess.value = 'LinkedIn account connected successfully!'
+        await loadLinkedInProfile()
+        setTimeout(() => {
+          linkedInSuccess.value = null
+        }, 3000)
+      } else {
+        linkedInError.value = saveResult.error || 'Failed to save LinkedIn connection'
+      }
+
+      linkedInLoading.value = false
+      window.removeEventListener('message', handleMessage)
+      popup?.close()
+    } else if (event.data.type === 'linkedin-oauth-error') {
+      linkedInError.value = event.data.error || 'Failed to connect LinkedIn'
+      linkedInLoading.value = false
+      window.removeEventListener('message', handleMessage)
+      popup?.close()
+    }
+  }
+
+  window.addEventListener('message', handleMessage)
+
+  // Fallback: close popup after 2 minutes
+  setTimeout(() => {
+    if (popup && !popup.closed) {
+      popup.close()
+      linkedInError.value = 'LinkedIn connection timed out. Please try again.'
+      linkedInLoading.value = false
+      window.removeEventListener('message', handleMessage)
+    }
+  }, 120000)
+}
+
+async function handleLinkedInDisconnect() {
+  if (!authStore.userId) return
+
+  linkedInLoading.value = true
+  linkedInError.value = null
+  linkedInSuccess.value = null
+
+  const result = await linkedInService.disconnectLinkedIn(authStore.userId)
+
+  if (result.success) {
+    linkedInProfile.value = null
+    linkedInSuccess.value = 'LinkedIn account disconnected successfully!'
+    setTimeout(() => {
+      linkedInSuccess.value = null
+    }, 3000)
+  } else {
+    linkedInError.value = result.error || 'Failed to disconnect LinkedIn'
+  }
+
+  linkedInLoading.value = false
 }
 
 async function handleLogout() {

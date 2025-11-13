@@ -101,9 +101,11 @@
           v-for="content in filteredContents"
           :key="content.id"
           :content="content"
+          :can-post-to-linked-in="canPostToLinkedIn"
           @view="$emit('view', content)"
           @edit="$emit('edit', content)"
           @delete="$emit('delete', content)"
+          @post-to-linked-in="$emit('postToLinkedIn', content)"
         />
       </div>
     </div>
@@ -119,6 +121,7 @@ interface Props {
   contents: Content[]
   loading?: boolean
   error?: string | null
+  canPostToLinkedIn?: boolean
 }
 
 interface Emits {
@@ -126,13 +129,15 @@ interface Emits {
   (e: 'view', content: Content): void
   (e: 'edit', content: Content): void
   (e: 'delete', content: Content): void
+  (e: 'postToLinkedIn', content: Content): void
   (e: 'retry'): void
   (e: 'filter', type: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
+  canPostToLinkedIn: false
 })
 
 const emit = defineEmits<Emits>()
