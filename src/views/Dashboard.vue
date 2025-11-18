@@ -69,7 +69,7 @@
           <!-- Studio Tab -->
           <div v-if="activeTab === 'studio'">
             <div v-if="!pillarStore.currentPillar" class="text-center py-12">
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">Studio</h2>
+              <h2 class="text-xl font-semibold text-primary-600 mb-2">Studio</h2>
               <p class="text-gray-600 mb-6">
                 Select a pillar from the Pillars tab to view its resources and create content.
               </p>
@@ -79,7 +79,7 @@
             </div>
             <div v-else>
               <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">{{ pillarStore.currentPillar.title }}</h2>
+                <h2 class="text-2xl font-bold text-primary-600">{{ pillarStore.currentPillar.title }}</h2>
                 <p v-if="pillarStore.currentPillar.advice" class="text-gray-600 mt-2">
                   {{ pillarStore.currentPillar.advice }}
                 </p>
@@ -142,7 +142,7 @@
           <div v-if="activeTab === 'debug' && appStore.superuser">
             <div class="max-w-6xl mx-auto">
               <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Debug Information</h2>
+                <h2 class="text-2xl font-bold text-primary-600 mb-6">Debug Information</h2>
 
                 <!-- Store States -->
                 <div class="space-y-6">

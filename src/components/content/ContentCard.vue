@@ -157,11 +157,10 @@ const copied = ref(false)
 
 function getTypeClass(type: string): string {
   const classes: Record<string, string> = {
-    linkedin: 'bg-blue-100 text-blue-800',
-    twitter: 'bg-sky-100 text-sky-800',
-    instagram: 'bg-pink-100 text-pink-800',
+    post: 'bg-blue-100 text-blue-800',
     blog: 'bg-purple-100 text-purple-800',
-    email: 'bg-green-100 text-green-800',
+    carousel: 'bg-pink-100 text-pink-800',
+    shortvideo: 'bg-green-100 text-green-800',
   }
   return classes[type.toLowerCase()] || 'bg-gray-100 text-gray-800'
 }

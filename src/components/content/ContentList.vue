@@ -41,8 +41,8 @@
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No Content Yet</h3>
       <p class="text-gray-600 mb-6 max-w-md mx-auto">
-        Start generating content from your pillar resources. AI will create engaging posts for
-        LinkedIn, Twitter, blogs, and more.
+        Start generating content from your pillar resources. AI will create engaging posts,
+        blog articles, carousels, and short video scripts.
       </p>
       <button @click="$emit('generate')" class="btn-primary">
         <svg
@@ -68,7 +68,7 @@
       <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div class="flex items-center gap-4">
           <div>
-            <h2 class="text-xl font-semibold text-gray-900">Content Library</h2>
+            <h2 class="text-xl font-semibold text-primary-600">Content Library</h2>
             <p class="text-sm text-gray-600 mt-1">
               {{ filteredContents.length }} item{{ filteredContents.length !== 1 ? 's' : '' }}
               <span v-if="selectedType">({{ selectedType }})</span>
@@ -84,11 +84,10 @@
             @change="$emit('filter', selectedType)"
           >
             <option value="">All Types</option>
-            <option value="linkedin">LinkedIn</option>
-            <option value="twitter">Twitter</option>
-            <option value="instagram">Instagram</option>
+            <option value="post">Post</option>
             <option value="blog">Blog</option>
-            <option value="email">Email</option>
+            <option value="carousel">Carousel</option>
+            <option value="shortvideo">Short Video</option>
           </select>
 
           <!-- Generate Button -->
