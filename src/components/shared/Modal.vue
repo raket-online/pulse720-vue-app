@@ -7,7 +7,10 @@
         @click.self="handleClose"
       >
         <div
-          class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+          :class="[
+            'bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto',
+            sizeClass
+          ]"
           @click.stop
         >
           <!-- Header -->
@@ -51,10 +54,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface Props {
   modelValue: boolean
   title: string
   showClose?: boolean
+  size?: 'small' | 'medium' | 'large' | 'xlarge'
 }
 
 interface Emits {
@@ -62,11 +68,22 @@ interface Emits {
   (e: 'close'): void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   showClose: true,
+  size: 'medium',
 })
 
 const emit = defineEmits<Emits>()
+
+const sizeClass = computed(() => {
+  const sizes = {
+    small: 'max-w-sm',
+    medium: 'max-w-md',
+    large: 'max-w-2xl',
+    xlarge: 'max-w-4xl',
+  }
+  return sizes[props.size]
+})
 
 function handleClose() {
   emit('update:modelValue', false)

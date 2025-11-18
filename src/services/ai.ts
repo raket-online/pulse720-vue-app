@@ -293,21 +293,14 @@ export async function generateContent(
   const resourcesText = resources.join('\n\n---RESOURCE---\n\n')
 
   const contentTypePrompts: Record<string, string> = {
-    linkedin: `Create a professional LinkedIn post that:
+    post: `Create an engaging social media post that:
 - Has an attention-grabbing first line (hook)
 - Is 150-300 words
 - Uses line breaks for readability
 - Includes 3-5 relevant hashtags at the end
-- Is professional yet conversational
-- Provides value and insights`,
-
-    twitter: `Create an engaging Twitter thread that:
-- Starts with a compelling hook tweet
-- Contains 3-5 tweets total
-- Each tweet is under 280 characters
-- Uses strategic line breaks
-- Includes relevant hashtags
-- Ends with a call-to-action`,
+- Is conversational and engaging
+- Provides value and insights
+- Works well on LinkedIn, Instagram, or Facebook`,
 
     blog: `Create a comprehensive blog post that:
 - Has an SEO-friendly title
@@ -315,26 +308,28 @@ export async function generateContent(
 - Is 500-800 words
 - Uses clear headings and structure
 - Provides actionable insights
-- Is optimized for engagement`,
+- Is optimized for engagement and readability`,
 
-    instagram: `Create an Instagram caption that:
-- Starts with an attention-grabbing first line
-- Is 100-200 words
-- Uses line breaks and emojis strategically
-- Includes 10-15 relevant hashtags
-- Ends with a question or call-to-action
-- Suggests a visual concept`,
+    carousel: `Create content for a multi-slide carousel that:
+- Has a compelling title slide
+- Contains 5-8 slides total
+- Each slide has a clear headline and 1-3 key points
+- Uses a logical flow from slide to slide
+- Ends with a call-to-action or summary
+- Provides valuable, actionable information
+- Format: Return each slide with "SLIDE X:" prefix`,
 
-    email: `Create an email newsletter that:
-- Has a compelling subject line
-- Includes a clear opening, body, and closing
-- Is 200-400 words
-- Uses short paragraphs for scannability
-- Includes a clear call-to-action
-- Has a professional yet friendly tone`
+    shortvideo: `Create a script for a short-form video (30-60 seconds) that:
+- Has a hook in the first 3 seconds
+- Includes a clear structure: Hook, Value, CTA
+- Is 150-200 words (speaking pace: ~150 words/minute)
+- Uses simple, conversational language
+- Includes visual cues or B-roll suggestions
+- Ends with a strong call-to-action
+- Works well for TikTok, Instagram Reels, or YouTube Shorts`
   }
 
-  const typeInstructions = contentTypePrompts[contentType] || contentTypePrompts['linkedin']
+  const typeInstructions = contentTypePrompts[contentType] || contentTypePrompts['post']
 
   const prompt = `You are an expert content creator. Create engaging ${contentType} content for the pillar "${pillarTitle}" using the following resources.
 
