@@ -9,20 +9,20 @@
           <button
             v-for="category in categories"
             :key="category.id"
-            @click="activeCategory = category.id"
             :class="[
               'px-1 py-4 text-sm font-medium border-b-2 transition-colors',
               activeCategory === category.id
                 ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300',
             ]"
+            @click="activeCategory = category.id"
           >
             {{ category.label }}
           </button>
         </nav>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="space-y-6">
+      <form class="space-y-6" @submit.prevent="handleSubmit">
         <!-- Company Category -->
         <div v-if="activeCategory === 'company'" class="space-y-4">
           <div>
@@ -81,7 +81,7 @@
               class="input-field resize-none"
               :disabled="loading"
               placeholder="Describe your target audience (e.g., B2B SaaS companies, tech startups, marketing professionals...)"
-            ></textarea>
+            />
             <p class="text-xs text-gray-500 mt-1">This helps AI generate more targeted content</p>
           </div>
         </div>
@@ -98,13 +98,13 @@
               class="input-field"
               :disabled="loading"
             >
-              <option value="en">English</option>
-              <option value="nl">Nederlands (Dutch)</option>
-              <option value="de">Deutsch (German)</option>
-              <option value="fr">Français (French)</option>
-              <option value="es">Español (Spanish)</option>
-              <option value="it">Italiano (Italian)</option>
-              <option value="pt">Português (Portuguese)</option>
+              <option value="English">English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Italian">Italian</option>
+              <option value="Dutch">Dutch</option>
+              <option value="Portuguese">Portuguese</option>
             </select>
             <p class="text-xs text-gray-500 mt-1">Language for generated content</p>
           </div>
@@ -120,7 +120,7 @@
               class="input-field resize-none"
               :disabled="loading"
               placeholder="Your email/content signature..."
-            ></textarea>
+            />
           </div>
         </div>
 
@@ -128,9 +128,7 @@
         <div v-if="activeCategory === 'branding'" class="space-y-4">
           <!-- Logo Upload -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Company Logo
-            </label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
 
             <div class="flex items-start gap-4">
               <!-- Current Logo Preview -->
@@ -145,9 +143,9 @@
                 </div>
                 <button
                   type="button"
-                  @click="handleRemoveLogo"
                   class="text-sm text-red-600 hover:text-red-700 mt-2"
                   :disabled="loading || uploadingLogo"
+                  @click="handleRemoveLogo"
                 >
                   Remove logo
                 </button>
@@ -156,10 +154,6 @@
               <!-- File Upload Area -->
               <div class="flex-1">
                 <div
-                  @click="triggerLogoInput"
-                  @dragover.prevent="isLogoDragging = true"
-                  @dragleave.prevent="isLogoDragging = false"
-                  @drop.prevent="handleLogoDrop"
                   :class="[
                     'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
                     isLogoDragging
@@ -167,14 +161,18 @@
                       : 'border-gray-300 hover:border-primary-400',
                     (loading || uploadingLogo) && 'opacity-50 cursor-not-allowed',
                   ]"
+                  @click="triggerLogoInput"
+                  @dragover.prevent="isLogoDragging = true"
+                  @dragleave.prevent="isLogoDragging = false"
+                  @drop.prevent="handleLogoDrop"
                 >
                   <input
                     ref="logoInput"
                     type="file"
                     accept="image/png"
-                    @change="handleLogoSelect"
                     class="hidden"
                     :disabled="loading || uploadingLogo"
+                    @change="handleLogoSelect"
                   />
 
                   <div v-if="!selectedLogo">
@@ -199,7 +197,12 @@
                   </div>
 
                   <div v-else class="flex items-center justify-center gap-3">
-                    <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      class="w-8 h-8 text-primary-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
@@ -208,14 +211,18 @@
                       />
                     </svg>
                     <div class="text-left">
-                      <p class="text-sm font-medium text-gray-900">{{ selectedLogo.name }}</p>
-                      <p class="text-xs text-gray-500">{{ formatFileSize(selectedLogo.size) }}</p>
+                      <p class="text-sm font-medium text-gray-900">
+                        {{ selectedLogo.name }}
+                      </p>
+                      <p class="text-xs text-gray-500">
+                        {{ formatFileSize(selectedLogo.size) }}
+                      </p>
                     </div>
                     <button
                       type="button"
-                      @click.stop="clearLogo"
                       class="p-1 hover:bg-gray-100 rounded"
                       :disabled="loading || uploadingLogo"
+                      @click.stop="clearLogo"
                     >
                       <svg
                         class="w-5 h-5 text-gray-500"
@@ -235,15 +242,21 @@
                 </div>
 
                 <!-- Upload Progress -->
-                <div v-if="uploadingLogo" class="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-lg">
+                <div
+                  v-if="uploadingLogo"
+                  class="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-lg"
+                >
                   <div class="flex items-center gap-3">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600"></div>
+                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600" />
                     <span class="text-sm text-primary-700">Uploading logo...</span>
                   </div>
                 </div>
 
                 <!-- Upload Error -->
-                <div v-if="logoUploadError" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div
+                  v-if="logoUploadError"
+                  class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+                >
                   {{ logoUploadError }}
                 </div>
 
@@ -282,7 +295,10 @@
             </div>
 
             <div>
-              <label for="brand-secondary-color" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="brand-secondary-color"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Secondary Color
               </label>
               <input
@@ -295,7 +311,10 @@
             </div>
 
             <div>
-              <label for="brand-tertiary-color" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="brand-tertiary-color"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Tertiary Color
               </label>
               <input
@@ -322,13 +341,37 @@
               :disabled="loading"
             >
               <option value="">Select a style...</option>
-              <option value="Realistic">Realistic</option>
-              <option value="Digital Art">Digital Art</option>
+              <option
+                value="Standard clean, smooth shapes, neutral colors, professional look, medium detail"
+              >
+                Standard
+              </option>
+              <option
+                value="Ultra-realistic, natural lighting, sharp focus, photorealistic style, high detail, DSLR quality, shallow depth of field, shot with a Canon EOS 5D, 35mm lens"
+              >
+                Ultra realistic
+              </option>
               <option value="Claymation 3D">Claymation 3D</option>
-              <option value="Anime">Anime</option>
-              <option value="Watercolor">Watercolor</option>
-              <option value="Oil Painting">Oil Painting</option>
-              <option value="Sketch">Sketch</option>
+              <option
+                value="vintage Soviet propaganda poster style, bold red and black colors, geometric shapes, dramatic pose, constructivist layout, heroic figure looking upward, sun rays in the background, strong typography"
+              >
+                Russian Constructivist
+              </option>
+              <option
+                value="Character in Pixar-style 3D animation, big eyes, expressive face, soft lighting, colorful and cinematic look"
+              >
+                Pixar Animation
+              </option>
+              <option
+                value="modern flat design style, bold colors, simple geometric shapes, no gradients, clean and minimalist look"
+              >
+                Modern flat
+              </option>
+              <option
+                value="Lego style, 3D-rendered, with Lego minifigures and Lego brick buildings, colorful plastic look, playful and detailed"
+              >
+                Lego
+              </option>
             </select>
           </div>
         </div>
@@ -341,7 +384,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="carousel-text-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-text-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Text Color
                 </label>
                 <input
@@ -354,7 +400,10 @@
               </div>
 
               <div>
-                <label for="carousel-background-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-background-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Background Color
                 </label>
                 <input
@@ -368,7 +417,10 @@
             </div>
 
             <div>
-              <label for="carousel-background-image" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="carousel-background-image"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Background Image URL
               </label>
               <input
@@ -395,7 +447,10 @@
             </div>
 
             <div>
-              <label for="carousel-background-opacity" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="carousel-background-opacity"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Background Opacity: {{ form.carousel_background_opacity }}
               </label>
               <input
@@ -425,12 +480,21 @@
                 class="input-field"
                 :disabled="loading"
               >
-                <option value="">Default Font</option>
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
+                <option value="">Select a font...</option>
+                <option value="aptos-extrabold.ttf">Aptos Extra Bold</option>
+                <option value="bb-torsos-pro-medium.ttf">BB Torsos Pro medium</option>
+                <option value="FiraSans-SemiBold.ttf">Fira Sans SemiBold</option>
+                <option value="InterTight-Black.ttf">Inter Tight Black</option>
+                <option value="Muli-Black.ttf">Muli Black</option>
+                <option value="november2.ttf">November2</option>
+                <option value="PlaywriteCU-VariableFont_wght.ttf">
+                  Playwrite CU Variable wght
+                </option>
                 <option value="Poppins-Bold.ttf">Poppins Bold</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Open Sans">Open Sans</option>
+                <option value="Poppins-ExtraBold.ttf">Poppins ExtraBold</option>
+                <option value="Respublika FY W04 Regular.ttf">Respublika FY W04 Regular</option>
+                <option value="Roboto-Bold.ttf">Roboto Bold</option>
+                <option value="THEBOLDFONT.ttf">THE BOLD FONT</option>
               </select>
             </div>
 
@@ -463,14 +527,15 @@
                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 :disabled="loading"
               />
-              <label for="carousel-border" class="text-sm text-gray-700">
-                Enable border
-              </label>
+              <label for="carousel-border" class="text-sm text-gray-700">Enable border</label>
             </div>
 
             <div v-if="form.carousel_border" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="carousel-border-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-border-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Border Color
                 </label>
                 <input
@@ -483,7 +548,10 @@
               </div>
 
               <div>
-                <label for="carousel-border-width" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-border-width"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Border Width: {{ form.carousel_border_width }}px
                 </label>
                 <input
@@ -522,7 +590,10 @@
             </div>
 
             <div>
-              <label for="carousel-logo-opacity" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="carousel-logo-opacity"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Logo Opacity: {{ form.carousel_logo_opacity }}
               </label>
               <input
@@ -550,14 +621,15 @@
                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 :disabled="loading"
               />
-              <label for="carousel-arrow" class="text-sm text-gray-700">
-                Show arrow
-              </label>
+              <label for="carousel-arrow" class="text-sm text-gray-700">Show arrow</label>
             </div>
 
             <div v-if="form.carousel_arrow" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="carousel-arrow-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-arrow-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Arrow Color
                 </label>
                 <input
@@ -570,7 +642,10 @@
               </div>
 
               <div>
-                <label for="carousel-arrow-opacity" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="carousel-arrow-opacity"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Arrow Opacity: {{ form.carousel_arrow_opacity }}
                 </label>
                 <input
@@ -621,7 +696,10 @@
             </div>
 
             <div>
-              <label for="shortvideo-subtitle-style" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-subtitle-style"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Subtitle Style
               </label>
               <select
@@ -644,9 +722,7 @@
                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 :disabled="loading"
               />
-              <label for="shortvideo-uppercase" class="text-sm text-gray-700">
-                Uppercase text
-              </label>
+              <label for="shortvideo-uppercase" class="text-sm text-gray-700">Uppercase text</label>
             </div>
           </div>
 
@@ -664,16 +740,29 @@
                 class="input-field"
                 :disabled="loading"
               >
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Open Sans">Open Sans</option>
-                <option value="Impact">Impact</option>
+                <option value="">Select a font...</option>
+                <option value="aptos-extrabold.ttf">Aptos Extra Bold</option>
+                <option value="bb-torsos-pro-medium.ttf">BB Torsos Pro medium</option>
+                <option value="FiraSans-SemiBold.ttf">Fira Sans SemiBold</option>
+                <option value="InterTight-Black.ttf">Inter Tight Black</option>
+                <option value="Muli-Black.ttf">Muli Black</option>
+                <option value="november2.ttf">November2</option>
+                <option value="PlaywriteCU-VariableFont_wght.ttf">
+                  Playwrite CU Variable wght
+                </option>
+                <option value="Poppins-Bold.ttf">Poppins Bold</option>
+                <option value="Poppins-ExtraBold.ttf">Poppins ExtraBold</option>
+                <option value="Respublika FY W04 Regular.ttf">Respublika FY W04 Regular</option>
+                <option value="Roboto-Bold.ttf">Roboto Bold</option>
+                <option value="THEBOLDFONT.ttf">THE BOLD FONT</option>
               </select>
             </div>
 
             <div>
-              <label for="shortvideo-font-size" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-font-size"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Font Size: {{ form.shortvideo_font_size }}px
               </label>
               <input
@@ -690,7 +779,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="shortvideo-text-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="shortvideo-text-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Text Color
                 </label>
                 <input
@@ -703,7 +795,10 @@
               </div>
 
               <div>
-                <label for="shortvideo-highlight-color" class="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  for="shortvideo-highlight-color"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Highlight Color
                 </label>
                 <input
@@ -722,7 +817,10 @@
             <h3 class="text-md font-semibold text-gray-900">Audio</h3>
 
             <div>
-              <label for="shortvideo-voice-name" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-voice-name"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Voice
               </label>
               <select
@@ -731,15 +829,27 @@
                 class="input-field"
                 :disabled="loading"
               >
-                <option value="Achird">Achird (Male)</option>
-                <option value="Alkes">Alkes (Female)</option>
-                <option value="Antares">Antares (Male)</option>
-                <option value="Bellatrix">Bellatrix (Female)</option>
+                <option value="">Select a voice...</option>
+                <option value="Sadaltager">Sadaltager (M) - Knowledgeable, Middle pitch</option>
+                <option value="Puck">Puck (M) - Upbeat, Middle pitch</option>
+                <option value="Orus">Orus (M) - Firm, Lower middle pitch</option>
+                <option value="Charon">Charon (M) - Informative, Lower pitch</option>
+                <option value="Alnilam">Alnilam (M) - Firm, Lower middle pitch</option>
+                <option value="Achird">Achird (M) - Friendly, Lower middle pitch</option>
+                <option value="Zephyr">Zephyr (F) - Bright, Higher pitch</option>
+                <option value="Aoede">Aoede (F) - Breezy, Middle pitch</option>
+                <option value="Leda">Leda (F) - Youthful, Higher pitch</option>
+                <option value="Pulcherrima">Pulcherrima (F) - Forward, Middle pitch</option>
+                <option value="Despina">Despina (F) - Smooth, Middle pitch</option>
+                <option value="Gacrux">Gacrux (F) - Mature, Middle pitch</option>
               </select>
             </div>
 
             <div>
-              <label for="shortvideo-voice-volume" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-voice-volume"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Voice Volume: {{ form.shortvideo_voice_volume }}
               </label>
               <input
@@ -755,7 +865,10 @@
             </div>
 
             <div>
-              <label for="shortvideo-speaking-rate" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-speaking-rate"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Speaking Rate: {{ form.shortvideo_speaking_rate }}
               </label>
               <input
@@ -780,15 +893,27 @@
                 class="input-field"
                 :disabled="loading"
               >
-                <option value="">None</option>
-                <option value="upbeat">Upbeat</option>
-                <option value="calm">Calm</option>
-                <option value="energetic">Energetic</option>
+                <option value="">No background music</option>
+                <option value="Ambient_Horizons.mp3">Ambient Horizons</option>
+                <option value="Block_Party-Bad_Snacks.mp3">Block Party</option>
+                <option value="Boardroom_Bounce.mp3">Boardroom Bounce</option>
+                <option value="Calm_Focus.mp3">Calm Focus</option>
+                <option value="Chasing_Light.mp3">Chasing Light</option>
+                <option value="Cool_Rock-Take_the_Lead-Kevin_MacLeod.mp3">Cool Rock</option>
+                <option value="Glass_Towers.mp3">Glass Towers</option>
+                <option value="I_Feel_Like_Partying_Right_Now.mp3">I Feel Like Partying</option>
+                <option value="Inspiring_Uplift.mp3">Inspiring Uplift</option>
+                <option value="Sunny_Days_Anno_Domini_Beats.mp3">Sunny Days</option>
+                <option value="We_Ride_Reed_Mathis.mp3">We Ride Reed Mathis</option>
+                <option value="Whispered_Blues.mp3">Whispered Blues</option>
               </select>
             </div>
 
             <div>
-              <label for="shortvideo-music-volume" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-music-volume"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Music Volume: {{ form.shortvideo_music_volume }}
               </label>
               <input
@@ -816,9 +941,7 @@
                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 :disabled="loading"
               />
-              <label for="shortvideo-show-intro" class="text-sm text-gray-700">
-                Show intro
-              </label>
+              <label for="shortvideo-show-intro" class="text-sm text-gray-700">Show intro</label>
             </div>
 
             <div class="flex items-center gap-2">
@@ -829,13 +952,14 @@
                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 :disabled="loading"
               />
-              <label for="shortvideo-show-outro" class="text-sm text-gray-700">
-                Show outro
-              </label>
+              <label for="shortvideo-show-outro" class="text-sm text-gray-700">Show outro</label>
             </div>
 
             <div v-if="form.shortvideo_show_outro">
-              <label for="shortvideo-outro-text" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-outro-text"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Outro Text
               </label>
               <input
@@ -849,7 +973,10 @@
             </div>
 
             <div v-if="form.shortvideo_show_outro">
-              <label for="shortvideo-outro-background" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="shortvideo-outro-background"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Outro Background Color
               </label>
               <input
@@ -952,19 +1079,19 @@
             <div class="flex items-center gap-3 pt-2">
               <button
                 v-if="isTokenExpired"
-                @click="handleLinkedInConnect"
                 type="button"
                 class="btn-primary text-sm"
                 :disabled="linkedInLoading"
+                @click="handleLinkedInConnect"
               >
                 <span v-if="linkedInLoading">Reconnecting...</span>
                 <span v-else>Reconnect LinkedIn</span>
               </button>
               <button
-                @click="handleLinkedInDisconnect"
                 type="button"
                 class="btn-secondary text-sm"
                 :disabled="linkedInLoading"
+                @click="handleLinkedInDisconnect"
               >
                 Disconnect
               </button>
@@ -1000,10 +1127,10 @@
             </div>
 
             <button
-              @click="handleLinkedInConnect"
               type="button"
               class="btn-primary"
               :disabled="linkedInLoading"
+              @click="handleLinkedInConnect"
             >
               <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -1062,7 +1189,7 @@
         <!-- Loading State -->
         <div v-if="loading" class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
           <div class="flex items-center justify-center gap-3">
-            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600"></div>
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600" />
             <span class="text-sm text-gray-700">Saving settings...</span>
           </div>
         </div>
@@ -1091,9 +1218,9 @@
           </button>
           <button
             type="button"
-            @click="handleReset"
             class="btn-secondary"
             :disabled="loading || !hasChanges"
+            @click="handleReset"
           >
             Reset Changes
           </button>
@@ -1124,16 +1251,19 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'submit', data: {
-    // Direct DB fields
-    company_name?: string
-    company_website?: string
-    logo_url?: string
-    target_audience?: string
-    output_language?: string
-    // JSON settings
-    settings?: Record<string, any>
-  }): void
+  (
+    e: 'submit',
+    data: {
+      // Direct DB fields
+      company_name?: string
+      company_website?: string
+      logo_url?: string
+      target_audience?: string
+      output_language?: string
+      // JSON settings
+      settings?: Record<string, any>
+    }
+  ): void
   (e: 'linkedinConnect'): void
   (e: 'linkedinDisconnect'): void
 }
@@ -1206,7 +1336,7 @@ const form = ref({
   shortvideo_voice_volume: 1.0,
   shortvideo_speaking_rate: 1.0,
   shortvideo_music: '',
-  shortvideo_music_volume: 0.10,
+  shortvideo_music_volume: 0.1,
   shortvideo_show_intro: false,
   shortvideo_show_outro: false,
   shortvideo_outro_text: '',
@@ -1256,21 +1386,34 @@ watch(
         form.value.imagegen_style = settings.imagegen_style || ''
 
         // Carousel
-        form.value.carousel_text_color = settings.brand_text_color || settings.carousel_text_color || '#ffffff'
+        form.value.carousel_text_color =
+          settings.brand_text_color || settings.carousel_text_color || '#ffffff'
         form.value.carousel_font = settings.brand_font || settings.carousel_font || ''
-        form.value.carousel_font_size = settings.brand_font_size || settings.carousel_font_size || 11
-        form.value.carousel_background_color = settings.brand_background_color || settings.carousel_background_color || '#ffffff'
-        form.value.carousel_background_image = settings.brand_background_image || settings.carousel_background_image || ''
-        form.value.carousel_random_background_images = settings.brand_random_background_images || settings.carousel_random_background_images || false
-        form.value.carousel_background_opacity = settings.brand_background_opacity || settings.carousel_background_opacity || 0.8
+        form.value.carousel_font_size =
+          settings.brand_font_size || settings.carousel_font_size || 11
+        form.value.carousel_background_color =
+          settings.brand_background_color || settings.carousel_background_color || '#ffffff'
+        form.value.carousel_background_image =
+          settings.brand_background_image || settings.carousel_background_image || ''
+        form.value.carousel_random_background_images =
+          settings.brand_random_background_images ||
+          settings.carousel_random_background_images ||
+          false
+        form.value.carousel_background_opacity =
+          settings.brand_background_opacity || settings.carousel_background_opacity || 0.8
         form.value.carousel_border = settings.brand_border || settings.carousel_border || false
-        form.value.carousel_border_color = settings.brand_border_color || settings.carousel_border_color || '#cccccc'
-        form.value.carousel_border_width = settings.brand_border_width || settings.carousel_border_width || 10
-        form.value.carousel_logo_opacity = settings.brand_logo_opacity || settings.carousel_logo_opacity || 1
+        form.value.carousel_border_color =
+          settings.brand_border_color || settings.carousel_border_color || '#cccccc'
+        form.value.carousel_border_width =
+          settings.brand_border_width || settings.carousel_border_width || 10
+        form.value.carousel_logo_opacity =
+          settings.brand_logo_opacity || settings.carousel_logo_opacity || 1
         form.value.logo_position = settings.logo_position || 'top-right'
         form.value.carousel_arrow = settings.brand_arrow || settings.carousel_arrow || false
-        form.value.carousel_arrow_color = settings.brand_arrow_color || settings.carousel_arrow_color || '#2d2d2d'
-        form.value.carousel_arrow_opacity = settings.brand_arrow_opacity || settings.carousel_arrow_opacity || 0.6
+        form.value.carousel_arrow_color =
+          settings.brand_arrow_color || settings.carousel_arrow_color || '#2d2d2d'
+        form.value.carousel_arrow_opacity =
+          settings.brand_arrow_opacity || settings.carousel_arrow_opacity || 0.6
 
         // Shortvideo
         form.value.shortvideo_enable_subtitles = settings.shortvideo_enable_subtitles ?? true
@@ -1279,11 +1422,12 @@ watch(
         form.value.shortvideo_voice_volume = settings.shortvideo_voice_volume ?? 1.0
         form.value.shortvideo_speaking_rate = settings.shortvideo_speaking_rate ?? 1.0
         form.value.shortvideo_music = settings.shortvideo_music || ''
-        form.value.shortvideo_music_volume = settings.shortvideo_music_volume ?? 0.10
+        form.value.shortvideo_music_volume = settings.shortvideo_music_volume ?? 0.1
         form.value.shortvideo_show_intro = settings.shortvideo_show_intro || false
         form.value.shortvideo_show_outro = settings.shortvideo_show_outro || false
         form.value.shortvideo_outro_text = settings.shortvideo_outro_text || ''
-        form.value.shortvideo_outro_background_color = settings.shortvideo_outro_background_color || 'black'
+        form.value.shortvideo_outro_background_color =
+          settings.shortvideo_outro_background_color || 'black'
         form.value.shortvideo_subtitle_style = settings.shortvideo_subtitle_style || 'karaoke'
         form.value.shortvideo_font = settings.shortvideo_font || 'Arial'
         form.value.shortvideo_font_size = settings.shortvideo_font_size ?? 48
@@ -1384,7 +1528,7 @@ function handleSubmit() {
 
   emit('submit', {
     ...dbUpdates,
-    settings
+    settings,
   })
 
   initialForm.value = { ...form.value }
@@ -1500,7 +1644,7 @@ function formatFileSize(bytes: number): string {
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
 // LinkedIn computed properties and functions

@@ -30,6 +30,12 @@ export default [
         document: 'readonly',
         navigator: 'readonly',
         console: 'readonly',
+        confirm: 'readonly',
+        // DOM types
+        HTMLInputElement: 'readonly',
+        File: 'readonly',
+        Event: 'readonly',
+        DragEvent: 'readonly',
         // Node globals for config files
         process: 'readonly',
         __dirname: 'readonly',
@@ -51,14 +57,13 @@ export default [
       'vue/no-v-html': 'warn', // Warn about v-html (XSS risk)
       'vue/require-default-prop': 'off', // TypeScript handles this
       'vue/require-prop-types': 'off', // TypeScript handles this
-      'vue/no-setup-props-destructure': 'error', // Prevent reactivity loss
 
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
           argsIgnorePattern: '^_',
-          varsIgnorePattern': '^_',
+          varsIgnorePattern: '^_',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'warn', // Warn about any usage
