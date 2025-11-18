@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-4xl mx-auto">
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">User Profile Settings</h2>
+      <h2 class="text-2xl font-bold text-primary-600 mb-6">User Profile Settings</h2>
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Company Information Section -->

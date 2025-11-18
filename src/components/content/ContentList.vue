@@ -68,7 +68,7 @@
       <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div class="flex items-center gap-4">
           <div>
-            <h2 class="text-xl font-semibold text-gray-900">Content Library</h2>
+            <h2 class="text-xl font-semibold text-primary-600">Content Library</h2>
             <p class="text-sm text-gray-600 mt-1">
               {{ filteredContents.length }} item{{ filteredContents.length !== 1 ? 's' : '' }}
               <span v-if="selectedType">({{ selectedType }})</span>

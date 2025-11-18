@@ -15,7 +15,7 @@
           </svg>
         </div>
 
-        <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">
+        <h2 class="text-2xl font-bold text-primary-600 text-center mb-2">
           Oops! Something went wrong
         </h2>
 

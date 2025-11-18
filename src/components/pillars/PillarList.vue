@@ -67,7 +67,7 @@
       <!-- Header with count and create button -->
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h2 class="text-xl font-semibold text-gray-900">Your Content Pillars</h2>
+          <h2 class="text-xl font-semibold text-primary-600">Your Content Pillars</h2>
           <p class="text-sm text-gray-600 mt-1">
             {{ pillars.length }} pillar{{ pillars.length !== 1 ? 's' : '' }}
           </p>
