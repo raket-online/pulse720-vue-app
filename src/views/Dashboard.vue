@@ -115,27 +115,21 @@
 
           <!-- Settings Tab -->
           <div v-if="activeTab === 'settings'">
-            <div class="space-y-6">
-              <UserProfile
-                :user-id="authStore.userId || ''"
-                :profile="appStore.userProfile"
-                :superuser="appStore.superuser"
-                :loading="profileLoading"
-                :error="profileError"
-                :success="profileSuccess"
-                @submit="handleUpdateProfile"
-              />
-
-              <LinkedInConnection
-                :user-id="authStore.userId || ''"
-                :linked-in-profile="linkedInProfile"
-                :loading="linkedInLoading"
-                :error="linkedInError"
-                :success="linkedInSuccess"
-                @connect="handleLinkedInConnect"
-                @disconnect="handleLinkedInDisconnect"
-              />
-            </div>
+            <UserProfile
+              :user-id="authStore.userId || ''"
+              :profile="appStore.userProfile"
+              :superuser="appStore.superuser"
+              :loading="profileLoading"
+              :error="profileError"
+              :success="profileSuccess"
+              :linked-in-profile="linkedInProfile"
+              :linked-in-loading="linkedInLoading"
+              :linked-in-error="linkedInError"
+              :linked-in-success="linkedInSuccess"
+              @submit="handleUpdateProfile"
+              @linkedin-connect="handleLinkedInConnect"
+              @linkedin-disconnect="handleLinkedInDisconnect"
+            />
           </div>
 
           <!-- Debug Tab (only for superusers) -->
@@ -317,7 +311,6 @@ import GenerateContentModal from '@/components/content/GenerateContentModal.vue'
 import ViewContentModal from '@/components/content/ViewContentModal.vue'
 import EditContentModal from '@/components/content/EditContentModal.vue'
 import UserProfile from '@/components/settings/UserProfile.vue'
-import LinkedInConnection from '@/components/settings/LinkedInConnection.vue'
 import * as pillarService from '@/services/pillar'
 import * as resourceService from '@/services/resource'
 import * as contentService from '@/services/content'
