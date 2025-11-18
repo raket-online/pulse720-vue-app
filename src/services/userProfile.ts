@@ -39,11 +39,14 @@ export async function fetchUserProfile(userId: string): Promise<UserProfileServi
 export async function updateUserProfile(
   userId: string,
   updates: {
+    // Direct DB fields
     company_name?: string
     company_website?: string
     logo_url?: string
     target_audience?: string
     output_language?: string
+    // JSON settings field
+    settings?: Record<string, any>
   }
 ): Promise<UserProfileServiceResult<UserProfile>> {
   try {
