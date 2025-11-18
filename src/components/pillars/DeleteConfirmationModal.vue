@@ -20,11 +20,11 @@
 
       <!-- Warning Message -->
       <div class="text-center">
-        <p class="text-gray-900 font-medium mb-2">
-          Are you sure you want to delete this pillar?
-        </p>
+        <p class="text-gray-900 font-medium mb-2">Are you sure you want to delete this pillar?</p>
         <p v-if="pillar" class="text-sm text-gray-600 mb-3">
-          "<span class="font-semibold">{{ pillar.title }}</span>"
+          "
+          <span class="font-semibold">{{ pillar.title }}</span>
+          "
         </p>
         <p class="text-sm text-red-600">
           This action cannot be undone. All associated resources and content will also be deleted.
@@ -39,12 +39,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="$emit('close')"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="$emit('close')" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -79,7 +74,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()

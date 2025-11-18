@@ -5,9 +5,7 @@
         <h3 class="text-lg font-semibold text-gray-900 truncate">
           {{ resource.title }}
         </h3>
-        <p class="text-sm text-gray-500 mt-1">
-          Added {{ formatDate(resource.added_at) }}
-        </p>
+        <p class="text-sm text-gray-500 mt-1">Added {{ formatDate(resource.added_at) }}</p>
       </div>
 
       <!-- Delete Button -->
@@ -36,15 +34,13 @@
     <div v-if="resource.score !== null || resource.advice" class="pt-4 border-t border-gray-100">
       <div v-if="resource.score !== null" class="flex items-center gap-2 mb-2">
         <span class="text-sm font-medium text-gray-700">Score:</span>
-        <div
-          class="px-2 py-1 rounded text-sm font-semibold"
-          :class="getScoreColor(resource.score)"
-        >
+        <div class="px-2 py-1 rounded text-sm font-semibold" :class="getScoreColor(resource.score)">
           {{ resource.score }}/10
         </div>
       </div>
       <div v-if="resource.advice" class="text-sm text-gray-600 line-clamp-2">
-        <span class="font-medium">Advice:</span> {{ resource.advice }}
+        <span class="font-medium">Advice:</span>
+        {{ resource.advice }}
       </div>
     </div>
 

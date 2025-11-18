@@ -19,9 +19,7 @@
         <p class="text-lg font-medium">Failed to load content</p>
         <p class="text-sm text-gray-600 mt-1">{{ error }}</p>
       </div>
-      <button @click="$emit('retry')" class="btn-primary">
-        Try Again
-      </button>
+      <button @click="$emit('retry')" class="btn-primary">Try Again</button>
     </div>
 
     <!-- Empty State -->
@@ -43,12 +41,22 @@
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No Content Yet</h3>
       <p class="text-gray-600 mb-6 max-w-md mx-auto">
-        Start generating content from your pillar resources. AI will create engaging posts
-        for LinkedIn, Twitter, blogs, and more.
+        Start generating content from your pillar resources. AI will create engaging posts for
+        LinkedIn, Twitter, blogs, and more.
       </p>
       <button @click="$emit('generate')" class="btn-primary">
-        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        <svg
+          class="w-5 h-5 inline-block mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
         </svg>
         Generate Content
       </button>
@@ -63,9 +71,7 @@
             <h2 class="text-xl font-semibold text-gray-900">Content Library</h2>
             <p class="text-sm text-gray-600 mt-1">
               {{ filteredContents.length }} item{{ filteredContents.length !== 1 ? 's' : '' }}
-              <span v-if="selectedType">
-                ({{ selectedType }})
-              </span>
+              <span v-if="selectedType">({{ selectedType }})</span>
             </p>
           </div>
         </div>
@@ -87,8 +93,18 @@
 
           <!-- Generate Button -->
           <button @click="$emit('generate')" class="btn-primary text-sm">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            <svg
+              class="w-4 h-4 inline-block mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Generate
           </button>
@@ -137,7 +153,7 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   error: null,
-  canPostToLinkedIn: false
+  canPostToLinkedIn: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -148,6 +164,6 @@ const filteredContents = computed(() => {
   if (!selectedType.value) {
     return props.contents
   }
-  return props.contents.filter(c => c.type.toLowerCase() === selectedType.value.toLowerCase())
+  return props.contents.filter((c) => c.type.toLowerCase() === selectedType.value.toLowerCase())
 })
 </script>

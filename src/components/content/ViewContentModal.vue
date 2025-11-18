@@ -50,7 +50,9 @@
       </div>
 
       <!-- Stats -->
-      <div class="pt-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-600">
+      <div
+        class="pt-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-600"
+      >
         <span>{{ content.content.length }} characters</span>
         <span>{{ wordCount }} words</span>
       </div>
@@ -58,20 +60,20 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-      >
-        Close
-      </button>
-      <button
-        type="button"
-        @click="copyToClipboard"
-        class="btn-primary"
-      >
-        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+      <button type="button" @click="handleClose" class="btn-secondary">Close</button>
+      <button type="button" @click="copyToClipboard" class="btn-primary">
+        <svg
+          class="w-4 h-4 inline-block mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+          />
         </svg>
         {{ copied ? 'Copied!' : 'Copy Content' }}
       </button>
@@ -101,7 +103,7 @@ const copied = ref(false)
 
 const wordCount = computed(() => {
   if (!props.content) return 0
-  return props.content.content.split(/\s+/).filter(word => word.length > 0).length
+  return props.content.content.split(/\s+/).filter((word) => word.length > 0).length
 })
 
 function getTypeClass(type: string): string {
@@ -122,13 +124,16 @@ function formatDate(dateString: string): string {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 
 function getKeywords(keywords: string | null): string[] {
   if (!keywords) return []
-  return keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
+  return keywords
+    .split(',')
+    .map((k) => k.trim())
+    .filter((k) => k.length > 0)
 }
 
 async function copyToClipboard() {

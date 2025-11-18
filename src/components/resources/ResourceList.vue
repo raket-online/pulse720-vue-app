@@ -19,9 +19,7 @@
         <p class="text-lg font-medium">Failed to load resources</p>
         <p class="text-sm text-gray-600 mt-1">{{ error }}</p>
       </div>
-      <button @click="$emit('retry')" class="btn-primary">
-        Try Again
-      </button>
+      <button @click="$emit('retry')" class="btn-primary">Try Again</button>
     </div>
 
     <!-- Empty State -->
@@ -43,31 +41,71 @@
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No Resources Yet</h3>
       <p class="text-gray-600 mb-6 max-w-md mx-auto">
-        Add resources to this pillar to build your content library. You can add text, URLs,
-        YouTube videos, PDFs, or audio recordings.
+        Add resources to this pillar to build your content library. You can add text, URLs, YouTube
+        videos, PDFs, or audio recordings.
       </p>
       <div class="flex flex-wrap justify-center gap-3">
         <button @click="$emit('addText')" class="btn-primary">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <svg
+            class="w-5 h-5 inline-block mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
           </svg>
           Add Text
         </button>
         <button @click="$emit('addURL')" class="btn-secondary">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          <svg
+            class="w-5 h-5 inline-block mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
           </svg>
           Add URL
         </button>
         <button @click="$emit('addPDF')" class="btn-secondary">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          <svg
+            class="w-5 h-5 inline-block mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+            />
           </svg>
           Upload PDF
         </button>
         <button @click="$emit('addAudio')" class="btn-secondary">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          <svg
+            class="w-5 h-5 inline-block mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+            />
           </svg>
           Record Audio
         </button>
@@ -86,8 +124,18 @@
         </div>
         <div class="flex gap-2">
           <button @click="$emit('addText')" class="btn-primary text-sm">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            <svg
+              class="w-4 h-4 inline-block mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Add Resource
           </button>
@@ -128,7 +176,7 @@ interface Emits {
 
 withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 defineEmits<Emits>()

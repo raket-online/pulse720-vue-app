@@ -9,7 +9,8 @@
       <div class="space-y-4">
         <div>
           <label for="resource-title" class="block text-sm font-medium text-gray-700 mb-1">
-            Title <span class="text-red-500">*</span>
+            Title
+            <span class="text-red-500">*</span>
           </label>
           <input
             id="resource-title"
@@ -25,7 +26,8 @@
 
         <div>
           <label for="resource-content" class="block text-sm font-medium text-gray-700 mb-1">
-            Content <span class="text-red-500">*</span>
+            Content
+            <span class="text-red-500">*</span>
           </label>
           <textarea
             id="resource-content"
@@ -45,7 +47,10 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+        >
           {{ error }}
         </div>
       </div>
@@ -53,12 +58,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -92,14 +92,14 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
 
 const form = ref({
   title: '',
-  content: ''
+  content: '',
 })
 
 const isValid = computed(() => {
@@ -107,20 +107,23 @@ const isValid = computed(() => {
 })
 
 // Reset form when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    form.value = {
-      title: '',
-      content: ''
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      form.value = {
+        title: '',
+        content: '',
+      }
     }
   }
-})
+)
 
 function handleSubmit() {
   if (isValid.value) {
     emit('submit', {
       title: form.value.title.trim(),
-      content: form.value.content.trim()
+      content: form.value.content.trim(),
     })
   }
 }

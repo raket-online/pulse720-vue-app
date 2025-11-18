@@ -11,7 +11,8 @@
         <!-- Pillar Selection -->
         <div>
           <label for="pillar-select" class="block text-sm font-medium text-gray-700 mb-1">
-            Select Pillar <span class="text-red-500">*</span>
+            Select Pillar
+            <span class="text-red-500">*</span>
           </label>
           <select
             id="pillar-select"
@@ -37,7 +38,8 @@
         <!-- Content Type -->
         <div>
           <label for="content-type" class="block text-sm font-medium text-gray-700 mb-1">
-            Content Type <span class="text-red-500">*</span>
+            Content Type
+            <span class="text-red-500">*</span>
           </label>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
             <button
@@ -49,7 +51,7 @@
                 'p-4 rounded-lg border-2 transition-all text-left',
                 form.contentType === type.value
                   ? 'border-primary-600 bg-primary-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-gray-200 hover:border-gray-300',
               ]"
               :disabled="loading"
             >
@@ -83,8 +85,18 @@
         <!-- Preview Mode Info -->
         <div v-if="!loading" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div class="flex items-start gap-2">
-            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <div class="text-sm text-blue-800">
               <p class="font-medium">AI will generate unique content based on:</p>
@@ -109,7 +121,10 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+        >
           {{ error }}
         </div>
       </div>
@@ -117,12 +132,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -161,7 +171,7 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   error: null,
-  selectedPillar: null
+  selectedPillar: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -169,7 +179,7 @@ const emit = defineEmits<Emits>()
 const form = ref({
   pillarId: '',
   contentType: 'linkedin',
-  instructions: ''
+  instructions: '',
 })
 
 const resourceCount = ref(0)
@@ -179,32 +189,32 @@ const contentTypes = [
     value: 'linkedin',
     label: 'LinkedIn',
     icon: '💼',
-    description: 'Professional posts, 150-300 words'
+    description: 'Professional posts, 150-300 words',
   },
   {
     value: 'twitter',
     label: 'Twitter',
     icon: '🐦',
-    description: 'Thread with 3-5 tweets'
+    description: 'Thread with 3-5 tweets',
   },
   {
     value: 'instagram',
     label: 'Instagram',
     icon: '📸',
-    description: 'Caption with hashtags'
+    description: 'Caption with hashtags',
   },
   {
     value: 'blog',
     label: 'Blog Post',
     icon: '📝',
-    description: 'Long-form 500-800 words'
+    description: 'Long-form 500-800 words',
   },
   {
     value: 'email',
     label: 'Email',
     icon: '✉️',
-    description: 'Newsletter format'
-  }
+    description: 'Newsletter format',
+  },
 ]
 
 const isValid = computed(() => {
@@ -212,25 +222,32 @@ const isValid = computed(() => {
 })
 
 // Initialize with selected pillar if provided
-watch(() => props.selectedPillar, (newPillar) => {
-  if (newPillar) {
-    form.value.pillarId = newPillar.id
-  }
-}, { immediate: true })
+watch(
+  () => props.selectedPillar,
+  (newPillar) => {
+    if (newPillar) {
+      form.value.pillarId = newPillar.id
+    }
+  },
+  { immediate: true }
+)
 
 // Reset form when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    if (!props.selectedPillar) {
-      form.value = {
-        pillarId: '',
-        contentType: 'linkedin',
-        instructions: ''
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      if (!props.selectedPillar) {
+        form.value = {
+          pillarId: '',
+          contentType: 'linkedin',
+          instructions: '',
+        }
+        resourceCount.value = 0
       }
-      resourceCount.value = 0
     }
   }
-})
+)
 
 function handlePillarChange() {
   emit('pillarChange', form.value.pillarId)
@@ -241,7 +258,7 @@ function handleSubmit() {
     emit('submit', {
       pillarId: form.value.pillarId,
       contentType: form.value.contentType,
-      instructions: form.value.instructions
+      instructions: form.value.instructions,
     })
   }
 }
@@ -254,6 +271,6 @@ function handleClose() {
 defineExpose({
   setResourceCount(count: number) {
     resourceCount.value = count
-  }
+  },
 })
 </script>

@@ -17,7 +17,8 @@
       <!-- Title -->
       <div>
         <label for="edit-title" class="block text-sm font-medium text-gray-700 mb-1">
-          Title <span class="text-red-500">*</span>
+          Title
+          <span class="text-red-500">*</span>
         </label>
         <input
           id="edit-title"
@@ -48,7 +49,8 @@
       <!-- Content -->
       <div>
         <label for="edit-content" class="block text-sm font-medium text-gray-700 mb-1">
-          Content <span class="text-red-500">*</span>
+          Content
+          <span class="text-red-500">*</span>
         </label>
         <textarea
           id="edit-content"
@@ -79,9 +81,7 @@
           :disabled="loading"
           placeholder="keyword1, keyword2, keyword3..."
         />
-        <p class="text-xs text-gray-500 mt-1">
-          Comma-separated keywords for better organization
-        </p>
+        <p class="text-xs text-gray-500 mt-1">Comma-separated keywords for better organization</p>
       </div>
 
       <!-- Visual Description -->
@@ -107,12 +107,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -142,19 +137,22 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'submit', data: {
-    title: string
-    content: string
-    hook?: string
-    keywords?: string
-    visual_description?: string
-  }): void
+  (
+    e: 'submit',
+    data: {
+      title: string
+      content: string
+      hook?: string
+      keywords?: string
+      visual_description?: string
+    }
+  ): void
   (e: 'close'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -164,11 +162,11 @@ const form = ref({
   content: '',
   hook: '',
   keywords: '',
-  visual_description: ''
+  visual_description: '',
 })
 
 const wordCount = computed(() => {
-  return form.value.content.split(/\s+/).filter(word => word.length > 0).length
+  return form.value.content.split(/\s+/).filter((word) => word.length > 0).length
 })
 
 const isValid = computed(() => {
@@ -176,24 +174,31 @@ const isValid = computed(() => {
 })
 
 // Initialize form when content changes
-watch(() => props.content, (newContent) => {
-  if (newContent) {
-    form.value = {
-      title: newContent.title || '',
-      content: newContent.content || '',
-      hook: newContent.hook || '',
-      keywords: newContent.keywords || '',
-      visual_description: newContent.visual_description || ''
+watch(
+  () => props.content,
+  (newContent) => {
+    if (newContent) {
+      form.value = {
+        title: newContent.title || '',
+        content: newContent.content || '',
+        hook: newContent.hook || '',
+        keywords: newContent.keywords || '',
+        visual_description: newContent.visual_description || '',
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 // Reset form when modal closes
-watch(() => props.modelValue, (newValue) => {
-  if (!newValue) {
-    // Modal closed, reset form on next open
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (!newValue) {
+      // Modal closed, reset form on next open
+    }
   }
-})
+)
 
 function getTypeClass(type: string): string {
   const classes: Record<string, string> = {
@@ -213,7 +218,7 @@ function handleSubmit() {
       content: form.value.content.trim(),
       hook: form.value.hook.trim() || undefined,
       keywords: form.value.keywords.trim() || undefined,
-      visual_description: form.value.visual_description.trim() || undefined
+      visual_description: form.value.visual_description.trim() || undefined,
     })
   }
 }

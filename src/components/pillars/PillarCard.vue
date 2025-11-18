@@ -6,12 +6,12 @@
   >
     <div class="flex items-start justify-between mb-3">
       <div class="flex-1 min-w-0">
-        <h3 class="text-lg font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors">
+        <h3
+          class="text-lg font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors"
+        >
           {{ pillar.title }}
         </h3>
-        <p class="text-sm text-gray-500 mt-1">
-          Updated {{ formatDate(pillar.last_updated) }}
-        </p>
+        <p class="text-sm text-gray-500 mt-1">Updated {{ formatDate(pillar.last_updated) }}</p>
       </div>
 
       <!-- Actions Menu -->
@@ -52,10 +52,7 @@
       <div v-if="pillar.score !== null" class="flex items-center gap-2 mb-2">
         <span class="text-sm font-medium text-gray-700">Score:</span>
         <div class="flex items-center gap-1">
-          <div
-            class="px-2 py-1 rounded text-sm font-semibold"
-            :class="getScoreColor(pillar.score)"
-          >
+          <div class="px-2 py-1 rounded text-sm font-semibold" :class="getScoreColor(pillar.score)">
             {{ pillar.score }}/10
           </div>
         </div>
@@ -66,9 +63,7 @@
     </div>
 
     <!-- Empty state -->
-    <div v-else class="text-sm text-gray-500 italic">
-      No resources added yet
-    </div>
+    <div v-else class="text-sm text-gray-500 italic">No resources added yet</div>
   </div>
 </template>
 
@@ -87,7 +82,7 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isSelected: false
+  isSelected: false,
 })
 
 const emit = defineEmits<Emits>()

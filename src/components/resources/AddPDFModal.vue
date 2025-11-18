@@ -9,7 +9,8 @@
       <!-- File Upload Area -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          PDF File <span class="text-red-500">*</span>
+          PDF File
+          <span class="text-red-500">*</span>
         </label>
         <div
           @click="triggerFileInput"
@@ -18,7 +19,9 @@
           @drop.prevent="handleDrop"
           :class="[
             'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-            isDragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400'
+            isDragging
+              ? 'border-primary-500 bg-primary-50'
+              : 'border-gray-300 hover:border-primary-400',
           ]"
         >
           <input
@@ -31,8 +34,18 @@
           />
 
           <div v-if="!selectedFile">
-            <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            <svg
+              class="w-12 h-12 mx-auto text-gray-400 mb-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
             </svg>
             <p class="text-sm text-gray-600 mb-1">
               <span class="font-medium text-primary-600">Click to upload</span>
@@ -43,7 +56,12 @@
 
           <div v-else class="flex items-center justify-center gap-3">
             <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
             </svg>
             <div class="text-left">
               <p class="text-sm font-medium text-gray-900">{{ selectedFile.name }}</p>
@@ -55,8 +73,18 @@
               class="p-1 hover:bg-gray-100 rounded"
               :disabled="loading"
             >
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="w-5 h-5 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -79,12 +107,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -118,7 +141,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -128,14 +151,17 @@ const selectedFile = ref<File | null>(null)
 const isDragging = ref(false)
 
 // Reset form when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    selectedFile.value = null
-    if (fileInput.value) {
-      fileInput.value.value = ''
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      selectedFile.value = null
+      if (fileInput.value) {
+        fileInput.value.value = ''
+      }
     }
   }
-})
+)
 
 function triggerFileInput() {
   if (!props.loading) {
@@ -190,7 +216,7 @@ async function handleSubmit() {
     const base64 = await fileToBase64(selectedFile.value)
     emit('submit', {
       file: selectedFile.value,
-      base64
+      base64,
     })
   } catch (err) {
     console.error('Error reading file:', err)

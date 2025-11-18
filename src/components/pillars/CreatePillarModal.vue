@@ -9,7 +9,8 @@
       <div class="space-y-4">
         <div>
           <label for="pillar-title" class="block text-sm font-medium text-gray-700 mb-1">
-            Pillar Title <span class="text-red-500">*</span>
+            Pillar Title
+            <span class="text-red-500">*</span>
           </label>
           <input
             id="pillar-title"
@@ -27,7 +28,10 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+        >
           {{ error }}
         </div>
       </div>
@@ -35,12 +39,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -74,7 +73,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -82,11 +81,14 @@ const emit = defineEmits<Emits>()
 const title = ref('')
 
 // Reset form when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    title.value = ''
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      title.value = ''
+    }
   }
-})
+)
 
 function handleSubmit() {
   if (title.value.trim()) {
