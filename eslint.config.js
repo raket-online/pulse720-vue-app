@@ -31,6 +31,7 @@ export default [
         navigator: 'readonly',
         console: 'readonly',
         confirm: 'readonly',
+        fetch: 'readonly',
         // DOM types
         HTMLInputElement: 'readonly',
         File: 'readonly',
