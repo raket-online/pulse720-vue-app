@@ -178,7 +178,7 @@ const emit = defineEmits<Emits>()
 
 const form = ref({
   pillarId: '',
-  contentType: 'linkedin',
+  contentType: 'post',
   instructions: '',
 })
 
@@ -186,34 +186,28 @@ const resourceCount = ref(0)
 
 const contentTypes = [
   {
-    value: 'linkedin',
-    label: 'LinkedIn',
-    icon: '💼',
-    description: 'Professional posts, 150-300 words',
-  },
-  {
-    value: 'twitter',
-    label: 'Twitter',
-    icon: '🐦',
-    description: 'Thread with 3-5 tweets',
-  },
-  {
-    value: 'instagram',
-    label: 'Instagram',
-    icon: '📸',
-    description: 'Caption with hashtags',
+    value: 'post',
+    label: 'Post',
+    icon: '📱',
+    description: 'Social media post, 150-300 words',
   },
   {
     value: 'blog',
-    label: 'Blog Post',
+    label: 'Blog',
     icon: '📝',
-    description: 'Long-form 500-800 words',
+    description: 'Long-form article, 500-800 words',
   },
   {
-    value: 'email',
-    label: 'Email',
-    icon: '✉️',
-    description: 'Newsletter format',
+    value: 'carousel',
+    label: 'Carousel',
+    icon: '🎠',
+    description: 'Multi-slide visual content',
+  },
+  {
+    value: 'shortvideo',
+    label: 'Short Video',
+    icon: '🎥',
+    description: 'Video script for short-form content',
   },
 ]
 
@@ -240,7 +234,7 @@ watch(
       if (!props.selectedPillar) {
         form.value = {
           pillarId: '',
-          contentType: 'linkedin',
+          contentType: 'post',
           instructions: '',
         }
         resourceCount.value = 0

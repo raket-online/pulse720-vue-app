@@ -4,9 +4,15 @@
     <header class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">Pulse720</h1>
-            <p class="text-sm text-gray-600">AI-Powered Content Management</p>
+          <div class="flex items-center gap-3">
+            <img
+              src="/pulse720-logo.png"
+              alt="Pulse720"
+              class="h-10 w-auto"
+            />
+            <div>
+              <p class="text-sm text-gray-600">AI-Powered Content Management</p>
+            </div>
           </div>
           <div class="flex items-center gap-4">
             <span class="text-sm text-gray-600">{{ authStore.user?.email }}</span>

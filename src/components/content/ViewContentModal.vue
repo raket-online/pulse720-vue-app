@@ -2,7 +2,7 @@
   <Modal
     :model-value="modelValue"
     :title="content?.title || 'Content'"
-    size="large"
+    size="xlarge"
     @update:model-value="$emit('update:modelValue', $event)"
     @close="handleClose"
   >
@@ -15,6 +15,16 @@
         <span class="text-sm text-gray-500">
           {{ formatDate(content.added_at) }}
         </span>
+      </div>
+
+      <!-- Media (if available) -->
+      <div v-if="content.media_url" class="rounded-lg overflow-hidden border border-gray-200">
+        <img
+          :src="content.media_url"
+          :alt="content.title"
+          class="w-full h-auto object-cover max-h-96"
+          @error="handleImageError"
+        />
       </div>
 
       <!-- Hook -->
@@ -108,13 +118,18 @@ const wordCount = computed(() => {
 
 function getTypeClass(type: string): string {
   const classes: Record<string, string> = {
-    linkedin: 'bg-blue-100 text-blue-800',
-    twitter: 'bg-sky-100 text-sky-800',
-    instagram: 'bg-pink-100 text-pink-800',
+    post: 'bg-blue-100 text-blue-800',
     blog: 'bg-purple-100 text-purple-800',
-    email: 'bg-green-100 text-green-800',
+    carousel: 'bg-pink-100 text-pink-800',
+    shortvideo: 'bg-green-100 text-green-800',
   }
   return classes[type.toLowerCase()] || 'bg-gray-100 text-gray-800'
+}
+
+function handleImageError(event: Event) {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+  console.warn('Failed to load image:', props.content?.media_url)
 }
 
 function formatDate(dateString: string): string {
