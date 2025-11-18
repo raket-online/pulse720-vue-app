@@ -9,7 +9,8 @@
       <div class="space-y-4">
         <div>
           <label for="resource-url" class="block text-sm font-medium text-gray-700 mb-1">
-            URL <span class="text-red-500">*</span>
+            URL
+            <span class="text-red-500">*</span>
           </label>
           <input
             id="resource-url"
@@ -20,16 +21,24 @@
             placeholder="https://example.com or https://youtube.com/watch?v=..."
             :disabled="loading"
           />
-          <p class="text-xs text-gray-500 mt-1">
-            Enter a webpage URL or YouTube video link
-          </p>
+          <p class="text-xs text-gray-500 mt-1">Enter a webpage URL or YouTube video link</p>
         </div>
 
         <!-- YouTube Detection -->
         <div v-if="isYouTubeURL" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div class="flex items-start gap-2">
-            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <div class="text-sm text-blue-800">
               <p class="font-medium">YouTube video detected</p>
@@ -39,7 +48,10 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+        >
           {{ error }}
         </div>
 
@@ -57,12 +69,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -96,7 +103,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -118,11 +125,14 @@ const isValidURL = computed(() => {
 })
 
 // Reset form when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    url.value = ''
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      url.value = ''
+    }
   }
-})
+)
 
 function handleSubmit() {
   if (isValidURL.value) {

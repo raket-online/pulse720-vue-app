@@ -38,7 +38,10 @@
           </div>
 
           <!-- Footer -->
-          <div v-if="$slots.footer" class="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+          <div
+            v-if="$slots.footer"
+            class="flex items-center justify-end gap-3 p-6 border-t border-gray-200"
+          >
             <slot name="footer"></slot>
           </div>
         </div>
@@ -60,7 +63,7 @@ interface Emits {
 }
 
 withDefaults(defineProps<Props>(), {
-  showClose: true
+  showClose: true,
 })
 
 const emit = defineEmits<Emits>()

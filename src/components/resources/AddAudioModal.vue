@@ -12,7 +12,7 @@
           <div
             :class="[
               'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors',
-              isRecording ? 'bg-red-100 animate-pulse' : 'bg-gray-100'
+              isRecording ? 'bg-red-100 animate-pulse' : 'bg-gray-100',
             ]"
           >
             <svg
@@ -40,9 +40,7 @@
         <p v-if="!isRecording && !transcript" class="text-gray-600">
           Click Start Recording to begin
         </p>
-        <p v-else-if="isRecording" class="text-gray-600">
-          Speak clearly into your microphone
-        </p>
+        <p v-else-if="isRecording" class="text-gray-600">Speak clearly into your microphone</p>
       </div>
 
       <!-- Real-time Transcript -->
@@ -50,8 +48,13 @@
         <label class="block text-sm font-medium text-gray-700">
           Transcript {{ isRecording ? '(Live)' : '' }}
         </label>
-        <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg min-h-[120px] max-h-[240px] overflow-y-auto">
-          <p v-if="transcript || currentTranscript" class="text-sm text-gray-900 whitespace-pre-wrap">
+        <div
+          class="p-4 bg-gray-50 border border-gray-200 rounded-lg min-h-[120px] max-h-[240px] overflow-y-auto"
+        >
+          <p
+            v-if="transcript || currentTranscript"
+            class="text-sm text-gray-900 whitespace-pre-wrap"
+          >
             {{ transcript || currentTranscript }}
           </p>
           <p v-else class="text-sm text-gray-500 italic">
@@ -69,10 +72,23 @@
       </div>
 
       <!-- Instructions -->
-      <div v-if="!isRecording && !transcript" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+      <div
+        v-if="!isRecording && !transcript"
+        class="p-3 bg-blue-50 border border-blue-200 rounded-lg"
+      >
         <div class="flex items-start gap-2">
-          <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <div class="text-sm text-blue-800">
             <p class="font-medium">Recording Tips:</p>
@@ -89,12 +105,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="isRecording"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="isRecording">
         {{ transcript ? 'Discard' : 'Cancel' }}
       </button>
 
@@ -105,8 +116,18 @@
         class="btn-primary"
         :disabled="loading"
       >
-        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        <svg
+          class="w-5 h-5 inline-block mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+          />
         </svg>
         Start Recording
       </button>
@@ -117,9 +138,24 @@
         @click="stopRecording"
         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
       >
-        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+        <svg
+          class="w-5 h-5 inline-block mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+          />
         </svg>
         Stop Recording
       </button>
@@ -158,7 +194,7 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   error: null,
-  deepgramApiKey: import.meta.env.VITE_DEEPGRAM_API_KEY || ''
+  deepgramApiKey: import.meta.env.VITE_DEEPGRAM_API_KEY || '',
 })
 
 const emit = defineEmits<Emits>()
@@ -175,17 +211,20 @@ let recordingInterval: ReturnType<typeof setInterval> | null = null
 let recordingStartTime = 0
 
 // Reset state when modal opens
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    isRecording.value = false
-    currentTranscript.value = ''
-    transcript.value = ''
-    recordingTime.value = '0:00'
-    localError.value = null
-  } else {
-    cleanup()
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      isRecording.value = false
+      currentTranscript.value = ''
+      transcript.value = ''
+      recordingTime.value = '0:00'
+      localError.value = null
+    } else {
+      cleanup()
+    }
   }
-})
+)
 
 async function startRecording() {
   try {
@@ -197,7 +236,9 @@ async function startRecording() {
     // Initialize Deepgram WebSocket
     const apiKey = props.deepgramApiKey
     if (!apiKey) {
-      throw new Error('Deepgram API key not configured. Please add VITE_DEEPGRAM_API_KEY to your .env file.')
+      throw new Error(
+        'Deepgram API key not configured. Please add VITE_DEEPGRAM_API_KEY to your .env file.'
+      )
     }
 
     deepgramSocket = new WebSocket(
@@ -256,7 +297,6 @@ async function startRecording() {
       const seconds = elapsed % 60
       recordingTime.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
     }, 1000)
-
   } catch (err) {
     console.error('Error starting recording:', err)
     if (err instanceof Error && err.name === 'NotAllowedError') {
@@ -283,7 +323,7 @@ function stopRecording() {
 
   // Stop media stream
   if (audioStream) {
-    audioStream.getTracks().forEach(track => track.stop())
+    audioStream.getTracks().forEach((track) => track.stop())
     audioStream = null
   }
 

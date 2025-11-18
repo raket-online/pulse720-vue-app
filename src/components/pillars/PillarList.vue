@@ -19,9 +19,7 @@
         <p class="text-lg font-medium">Failed to load pillars</p>
         <p class="text-sm text-gray-600 mt-1">{{ error }}</p>
       </div>
-      <button @click="$emit('retry')" class="btn-primary">
-        Try Again
-      </button>
+      <button @click="$emit('retry')" class="btn-primary">Try Again</button>
     </div>
 
     <!-- Empty State -->
@@ -47,7 +45,12 @@
         organize your resources and content.
       </p>
       <button @click="$emit('create')" class="btn-primary">
-        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-5 h-5 inline-block mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -70,7 +73,12 @@
           </p>
         </div>
         <button @click="$emit('create')" class="btn-primary">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            class="w-5 h-5 inline-block mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -120,7 +128,7 @@ interface Emits {
 withDefaults(defineProps<Props>(), {
   loading: false,
   error: null,
-  selectedPillarId: null
+  selectedPillarId: null,
 })
 
 defineEmits<Emits>()

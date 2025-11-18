@@ -9,7 +9,8 @@
       <div class="space-y-4">
         <div>
           <label for="edit-pillar-title" class="block text-sm font-medium text-gray-700 mb-1">
-            Pillar Title <span class="text-red-500">*</span>
+            Pillar Title
+            <span class="text-red-500">*</span>
           </label>
           <input
             id="edit-pillar-title"
@@ -24,7 +25,10 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+        >
           {{ error }}
         </div>
       </div>
@@ -32,12 +36,7 @@
 
     <!-- Footer Buttons -->
     <template #footer>
-      <button
-        type="button"
-        @click="handleClose"
-        class="btn-secondary"
-        :disabled="loading"
-      >
+      <button type="button" @click="handleClose" class="btn-secondary" :disabled="loading">
         Cancel
       </button>
       <button
@@ -73,7 +72,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
 })
 
 const emit = defineEmits<Emits>()
@@ -81,20 +80,27 @@ const emit = defineEmits<Emits>()
 const title = ref('')
 
 // Initialize form when pillar changes
-watch(() => props.pillar, (newPillar) => {
-  if (newPillar) {
-    title.value = newPillar.title
-  }
-}, { immediate: true })
+watch(
+  () => props.pillar,
+  (newPillar) => {
+    if (newPillar) {
+      title.value = newPillar.title
+    }
+  },
+  { immediate: true }
+)
 
 // Reset form when modal closes
-watch(() => props.modelValue, (newValue) => {
-  if (!newValue) {
-    title.value = ''
-  } else if (props.pillar) {
-    title.value = props.pillar.title
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (!newValue) {
+      title.value = ''
+    } else if (props.pillar) {
+      title.value = props.pillar.title
+    }
   }
-})
+)
 
 function handleSubmit() {
   if (props.pillar && title.value.trim() && title.value !== props.pillar.title) {
