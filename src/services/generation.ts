@@ -95,15 +95,20 @@ export async function generateText(
 
     const data = await response.json()
 
+    console.log('API Response:', data)
+
     // Parse JSON response from completion
     let parsedData
     try {
       parsedData =
         typeof data.completion === 'string' ? JSON.parse(data.completion) : data.completion
-    } catch {
+    } catch (parseError) {
       console.error('Failed to parse completion JSON:', data.completion)
+      console.error('Parse error:', parseError)
       throw new Error('Invalid JSON in API response')
     }
+
+    console.log('Parsed data:', parsedData)
 
     return {
       success: true,

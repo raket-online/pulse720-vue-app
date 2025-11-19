@@ -140,11 +140,27 @@ export async function generatePost(
       max_tokens: 4000,
     })
 
+    console.log('Post text generation result:', textResult)
+
     if (!textResult.success || !textResult.data) {
+      console.error('Post text generation failed:', textResult)
       throw new Error(textResult.error || 'Failed to generate post text')
     }
 
+    console.log('Post data structure:', textResult.data)
     const postData = textResult.data as PostGenerationResult
+    console.log('Post data after cast:', postData)
+
+    // Validate post data structure
+    if (!postData.post) {
+      console.error('Invalid post data structure. Expected {post: {...}}, got:', postData)
+      throw new Error('Invalid API response structure for post generation')
+    }
+
+    if (!postData.post.title || !postData.post.content) {
+      console.error('Missing required post fields:', postData.post)
+      throw new Error('API response missing required post fields (title or content)')
+    }
 
     // Add signature if available
     let content = postData.post.content
@@ -157,7 +173,7 @@ export async function generatePost(
     const imagePrompt = buildImagePrompt(
       'post',
       postData.post.title,
-      postData.post.summary,
+      postData.post.summary || postData.post.content.substring(0, 200),
       options.brandPrimaryColor,
       options.brandSecondaryColor
     )
@@ -175,10 +191,10 @@ export async function generatePost(
       success: true,
       data: {
         title: postData.post.title,
-        hook: postData.post.hook,
+        hook: postData.post.hook || '',
         content,
-        keywords: postData.post.keywords,
-        visualDescription: postData.post.summary,
+        keywords: postData.post.keywords || '',
+        visualDescription: postData.post.summary || postData.post.title,
         imageUrl: imageResult.data?.image_url,
       },
     }
@@ -227,18 +243,34 @@ export async function generateBlog(
       max_tokens: 4000,
     })
 
+    console.log('Blog text generation result:', textResult)
+
     if (!textResult.success || !textResult.data) {
+      console.error('Blog text generation failed:', textResult)
       throw new Error(textResult.error || 'Failed to generate blog text')
     }
 
+    console.log('Blog data structure:', textResult.data)
     const blogData = textResult.data as BlogGenerationResult
+    console.log('Blog data after cast:', blogData)
+
+    // Validate blog data structure
+    if (!blogData.blog) {
+      console.error('Invalid blog data structure. Expected {blog: {...}}, got:', blogData)
+      throw new Error('Invalid API response structure for blog generation')
+    }
+
+    if (!blogData.blog.title || !blogData.blog.content) {
+      console.error('Missing required blog fields:', blogData.blog)
+      throw new Error('API response missing required blog fields (title or content)')
+    }
 
     // Step 3: Generate image (16:9 for blog header)
     onProgress?.({ step: 'image', progress: 70, message: 'Generating blog header image...' })
     const imagePrompt = buildImagePrompt(
       'blog',
       blogData.blog.title,
-      blogData.blog.summary,
+      blogData.blog.summary || blogData.blog.content.substring(0, 200),
       options.brandPrimaryColor,
       options.brandSecondaryColor
     )
@@ -257,8 +289,8 @@ export async function generateBlog(
       data: {
         title: blogData.blog.title,
         content: blogData.blog.content,
-        framework: blogData.blog.framework,
-        summary: blogData.blog.summary,
+        framework: blogData.blog.framework || 'Standard',
+        summary: blogData.blog.summary || blogData.blog.title,
         imageUrl: imageResult.data?.image_url,
       },
     }
