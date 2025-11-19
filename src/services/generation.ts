@@ -81,11 +81,12 @@ export async function generateText(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        provider: params.provider || 'google',
-        model: params.model || 'gemini-2.0-flash-exp',
+        provider: params.provider || 'gemini',
+        model: params.model || 'gemini-2.5-pro',
         prompt: params.prompt,
-        temperature: params.temperature ?? 0.8,
-        max_tokens: params.max_tokens || 4000,
+        temperature: params.temperature ?? 1.0,
+        max_tokens: params.max_tokens || 5000,
+        json_format: true,
       }),
     })
 
@@ -96,6 +97,11 @@ export async function generateText(
     const data = await response.json()
 
     console.log('API Response:', data)
+
+    // Check if API returned an error
+    if (data.success === false) {
+      throw new Error(data.message || 'API returned an error')
+    }
 
     // Parse JSON response from completion
     let parsedData

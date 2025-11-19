@@ -133,11 +133,11 @@ export async function generatePost(
     const prompt = fillTemplate(SOCIAL_POST_TEMPLATE, placeholders)
 
     const textResult = await generateText({
-      provider: 'google',
-      model: 'gemini-2.0-flash-exp',
+      provider: 'gemini',
+      model: 'gemini-2.5-pro',
       prompt,
-      temperature: 0.8,
-      max_tokens: 4000,
+      temperature: 1.0,
+      max_tokens: 5000,
     })
 
     console.log('Post text generation result:', textResult)
@@ -236,11 +236,11 @@ export async function generateBlog(
     const prompt = fillTemplate(BLOG_POST_TEMPLATE, placeholders)
 
     const textResult = await generateText({
-      provider: 'google',
-      model: 'gemini-2.0-flash-exp',
+      provider: 'gemini',
+      model: 'gemini-2.5-pro',
       prompt,
-      temperature: 0.8,
-      max_tokens: 4000,
+      temperature: 1.0,
+      max_tokens: 5000,
     })
 
     console.log('Blog text generation result:', textResult)
@@ -331,11 +331,11 @@ export async function generateCarouselContent(
     const prompt = fillTemplate(CAROUSEL_TEMPLATE, placeholders)
 
     const textResult = await generateText({
-      provider: 'google',
-      model: 'gemini-2.0-flash-exp',
+      provider: 'gemini',
+      model: 'gemini-2.5-pro',
       prompt,
-      temperature: 0.8,
-      max_tokens: 4000,
+      temperature: 1.0,
+      max_tokens: 5000,
     })
 
     if (!textResult.success || !textResult.data) {
@@ -406,11 +406,11 @@ export async function generateShortVideo(
     const prompt = fillTemplate(SHORT_VIDEO_TEMPLATE, placeholders)
 
     const textResult = await generateText({
-      provider: 'google',
-      model: 'gemini-2.0-flash-exp',
+      provider: 'gemini',
+      model: 'gemini-2.5-pro',
       prompt,
-      temperature: 0.8,
-      max_tokens: 4000,
+      temperature: 1.0,
+      max_tokens: 5000,
     })
 
     if (!textResult.success || !textResult.data) {
