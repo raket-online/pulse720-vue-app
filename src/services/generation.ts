@@ -149,9 +149,12 @@ export async function generateText(
 export interface ImageGenerationParams {
   prompt: string
   model?: string
-  size?: string
-  aspectRatio?: string
-  numImages?: number
+  endpoint?: string
+  imageSize?: string
+  style?: string
+  renderingSpeed?: string
+  expandPrompt?: boolean
+  sampleCount?: number
 }
 
 export interface ImageGenerationResult {
@@ -165,18 +168,34 @@ export async function generateImage(
   params: ImageGenerationParams
 ): Promise<GenerationServiceResult<ImageGenerationResult>> {
   try {
+    const requestBody = {
+      provider: 'falai',
+      model_type: 'falai',
+      model: params.model || 'ideogram/v3',
+      endpoint: params.endpoint || 'ideogram/v3',
+      prompt: params.prompt,
+      sampleCount: params.sampleCount || 1,
+      image_size: params.imageSize || 'square_hd',
+      style: params.style || 'DESIGN',
+      rendering_speed: params.renderingSpeed || 'TURBO',
+      expand_prompt: params.expandPrompt ?? true,
+    }
+
+    console.log('Sending image request with params:', {
+      provider: requestBody.provider,
+      model: requestBody.model,
+      endpoint: requestBody.endpoint,
+      image_size: requestBody.image_size,
+      style: requestBody.style,
+      rendering_speed: requestBody.rendering_speed,
+    })
+
     const response = await fetch(`${API_BASE_URL}/image`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        prompt: params.prompt,
-        model: params.model || 'fal-ai/ideogram/v3',
-        size: params.size || '1024x1024',
-        aspect_ratio: params.aspectRatio || 'ASPECT_1_1',
-        num_images: params.numImages || 1,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {
@@ -208,18 +227,30 @@ export async function generateImageQuick(
   params: ImageGenerationParams
 ): Promise<GenerationServiceResult<ImageGenerationResult>> {
   try {
+    const requestBody = {
+      provider: 'falai',
+      model_type: 'falai',
+      model: params.model || 'flux/schnell',
+      endpoint: params.endpoint || 'flux/schnell',
+      prompt: params.prompt,
+      sampleCount: params.sampleCount || 1,
+      image_size: params.imageSize || 'square_hd',
+      num_inference_steps: 4,
+    }
+
+    console.log('Sending quick image request with params:', {
+      provider: requestBody.provider,
+      model: requestBody.model,
+      endpoint: requestBody.endpoint,
+      image_size: requestBody.image_size,
+    })
+
     const response = await fetch(`${API_BASE_URL}/image`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        prompt: params.prompt,
-        model: params.model || 'fal-ai/flux/schnell',
-        image_size: params.size || 'square_hd',
-        num_inference_steps: 4,
-        num_images: params.numImages || 1,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {

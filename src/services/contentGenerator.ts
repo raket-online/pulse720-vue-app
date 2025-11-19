@@ -176,9 +176,12 @@ export async function generatePost(
 
     const imageResult = await generateImage({
       prompt: imagePrompt,
-      model: 'fal-ai/ideogram/v3',
-      size: '1024x1024',
-      aspectRatio: 'ASPECT_1_1',
+      model: 'ideogram/v3',
+      endpoint: 'ideogram/v3',
+      imageSize: 'square_hd',
+      style: 'DESIGN',
+      renderingSpeed: 'TURBO',
+      expandPrompt: true,
     })
 
     onProgress?.({ step: 'complete', progress: 100, message: 'Post generation complete!' })
@@ -273,9 +276,12 @@ export async function generateBlog(
 
     const imageResult = await generateImage({
       prompt: imagePrompt,
-      model: 'fal-ai/ideogram/v3',
-      size: '1792x1024',
-      aspectRatio: 'ASPECT_16_9',
+      model: 'ideogram/v3',
+      endpoint: 'ideogram/v3',
+      imageSize: 'landscape_16_9',
+      style: 'DESIGN',
+      renderingSpeed: 'TURBO',
+      expandPrompt: true,
     })
 
     onProgress?.({ step: 'complete', progress: 100, message: 'Blog generation complete!' })
@@ -427,8 +433,9 @@ export async function generateShortVideo(
         try {
           const imageResult = await generateImageQuick({
             prompt: sentence.visual_cue,
-            model: 'fal-ai/flux/schnell',
-            size: 'portrait_16_9',
+            model: 'flux/schnell',
+            endpoint: 'flux/schnell',
+            imageSize: 'portrait_16_9',
           })
 
           onProgress?.({
