@@ -46,6 +46,7 @@ export default [
         FileReader: 'readonly',
         Event: 'readonly',
         DragEvent: 'readonly',
+        MessageEvent: 'readonly',
         // Web APIs
         URL: 'readonly',
         URLSearchParams: 'readonly',

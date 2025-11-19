@@ -5,23 +5,14 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-3">
-            <img
-              src="/pulse720-logo.png"
-              alt="Pulse720"
-              class="h-10 w-auto"
-            />
+            <img src="/pulse720-logo.png" alt="Pulse720" class="h-10 w-auto" />
             <div>
               <p class="text-sm text-gray-600">AI-Powered Content Management</p>
             </div>
           </div>
           <div class="flex items-center gap-4">
             <span class="text-sm text-gray-600">{{ authStore.user?.email }}</span>
-            <button
-              @click="handleLogout"
-              class="btn-secondary"
-            >
-              Logout
-            </button>
+            <button class="btn-secondary" @click="handleLogout">Logout</button>
           </div>
         </div>
       </div>
@@ -36,13 +27,13 @@
             <button
               v-for="tab in tabs"
               :key="tab.id"
-              @click="handleTabChange(tab.id)"
               :class="[
                 'px-6 py-4 text-sm font-medium border-b-2 transition-colors',
                 activeTab === tab.id
                   ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300',
               ]"
+              @click="handleTabChange(tab.id)"
             >
               {{ tab.label }}
             </button>
@@ -66,20 +57,20 @@
             />
           </div>
 
-          <!-- Studio Tab -->
-          <div v-if="activeTab === 'studio'">
+          <!-- Resources Tab -->
+          <div v-if="activeTab === 'resources'">
             <div v-if="!pillarStore.currentPillar" class="text-center py-12">
-              <h2 class="text-xl font-semibold text-primary-600 mb-2">Studio</h2>
+              <h2 class="text-xl font-semibold text-primary-600 mb-2">Resources</h2>
               <p class="text-gray-600 mb-6">
-                Select a pillar from the Pillars tab to view its resources and create content.
+                Select a pillar from the Pillars tab to view and manage its resources.
               </p>
-              <button @click="activeTab = 'pillars'" class="btn-primary">
-                Go to Pillars
-              </button>
+              <button class="btn-primary" @click="activeTab = 'pillars'">Go to Pillars</button>
             </div>
             <div v-else>
               <div class="mb-6">
-                <h2 class="text-2xl font-bold text-primary-600">{{ pillarStore.currentPillar.title }}</h2>
+                <h2 class="text-2xl font-bold text-primary-600">
+                  {{ pillarStore.currentPillar.title }}
+                </h2>
                 <p v-if="pillarStore.currentPillar.advice" class="text-gray-600 mt-2">
                   {{ pillarStore.currentPillar.advice }}
                 </p>
@@ -88,14 +79,19 @@
                 :resources="currentPillarResources"
                 :loading="resourceStore.loading"
                 :error="resourceStore.error"
-                @addText="showAddTextModal = true"
-                @addURL="showAddURLModal = true"
-                @addPDF="showAddPDFModal = true"
-                @addAudio="showAddAudioModal = true"
+                @add-text="showAddTextModal = true"
+                @add-u-r-l="showAddURLModal = true"
+                @add-p-d-f="showAddPDFModal = true"
+                @add-audio="showAddAudioModal = true"
                 @delete="handleDeleteResource"
                 @retry="loadResources"
               />
             </div>
+          </div>
+
+          <!-- Studio Tab -->
+          <div v-if="activeTab === 'studio'">
+            <StudioContainer />
           </div>
           <!-- Content Tab -->
           <div v-if="activeTab === 'content'">
@@ -144,8 +140,14 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Authentication</h3>
                     <div class="bg-gray-50 rounded p-4 font-mono text-sm">
-                      <p><strong>User ID:</strong> {{ authStore.userId }}</p>
-                      <p><strong>Session:</strong> {{ authStore.session ? 'Active' : 'None' }}</p>
+                      <p>
+                        <strong>User ID:</strong>
+                        {{ authStore.userId }}
+                      </p>
+                      <p>
+                        <strong>Session:</strong>
+                        {{ authStore.session ? 'Active' : 'None' }}
+                      </p>
                     </div>
                   </div>
 
@@ -153,10 +155,22 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Pillars</h3>
                     <div class="bg-gray-50 rounded p-4 font-mono text-sm">
-                      <p><strong>Total:</strong> {{ pillarStore.pillars.length }}</p>
-                      <p><strong>Current:</strong> {{ pillarStore.currentPillar?.title || 'None' }}</p>
-                      <p><strong>Loading:</strong> {{ pillarStore.loading }}</p>
-                      <p><strong>Error:</strong> {{ pillarStore.error || 'None' }}</p>
+                      <p>
+                        <strong>Total:</strong>
+                        {{ pillarStore.pillars.length }}
+                      </p>
+                      <p>
+                        <strong>Current:</strong>
+                        {{ pillarStore.currentPillar?.title || 'None' }}
+                      </p>
+                      <p>
+                        <strong>Loading:</strong>
+                        {{ pillarStore.loading }}
+                      </p>
+                      <p>
+                        <strong>Error:</strong>
+                        {{ pillarStore.error || 'None' }}
+                      </p>
                     </div>
                   </div>
 
@@ -164,10 +178,22 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Resources</h3>
                     <div class="bg-gray-50 rounded p-4 font-mono text-sm">
-                      <p><strong>Total:</strong> {{ resourceStore.resources.length }}</p>
-                      <p><strong>Current Pillar:</strong> {{ currentPillarResources.length }}</p>
-                      <p><strong>Loading:</strong> {{ resourceStore.loading }}</p>
-                      <p><strong>Error:</strong> {{ resourceStore.error || 'None' }}</p>
+                      <p>
+                        <strong>Total:</strong>
+                        {{ resourceStore.resources.length }}
+                      </p>
+                      <p>
+                        <strong>Current Pillar:</strong>
+                        {{ currentPillarResources.length }}
+                      </p>
+                      <p>
+                        <strong>Loading:</strong>
+                        {{ resourceStore.loading }}
+                      </p>
+                      <p>
+                        <strong>Error:</strong>
+                        {{ resourceStore.error || 'None' }}
+                      </p>
                     </div>
                   </div>
 
@@ -175,9 +201,18 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Content</h3>
                     <div class="bg-gray-50 rounded p-4 font-mono text-sm">
-                      <p><strong>Total:</strong> {{ contentStore.contents.length }}</p>
-                      <p><strong>Loading:</strong> {{ contentStore.loading }}</p>
-                      <p><strong>Error:</strong> {{ contentStore.error || 'None' }}</p>
+                      <p>
+                        <strong>Total:</strong>
+                        {{ contentStore.contents.length }}
+                      </p>
+                      <p>
+                        <strong>Loading:</strong>
+                        {{ contentStore.loading }}
+                      </p>
+                      <p>
+                        <strong>Error:</strong>
+                        {{ contentStore.error || 'None' }}
+                      </p>
                     </div>
                   </div>
 
@@ -185,10 +220,22 @@
                   <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">App Settings</h3>
                     <div class="bg-gray-50 rounded p-4 font-mono text-sm">
-                      <p><strong>Superuser:</strong> {{ appStore.superuser }}</p>
-                      <p><strong>Default Tab:</strong> {{ appStore.defaultTab }}</p>
-                      <p><strong>Company:</strong> {{ appStore.settings.company_name || 'Not set' }}</p>
-                      <p><strong>Language:</strong> {{ appStore.settings.output_language || 'Not set' }}</p>
+                      <p>
+                        <strong>Superuser:</strong>
+                        {{ appStore.superuser }}
+                      </p>
+                      <p>
+                        <strong>Default Tab:</strong>
+                        {{ appStore.defaultTab }}
+                      </p>
+                      <p>
+                        <strong>Company:</strong>
+                        {{ appStore.settings.company_name || 'Not set' }}
+                      </p>
+                      <p>
+                        <strong>Language:</strong>
+                        {{ appStore.settings.output_language || 'Not set' }}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -261,6 +308,7 @@
 
     <!-- Content Modals -->
     <GenerateContentModal
+      ref="generateModalRef"
       v-model="showGenerateModal"
       :pillars="pillarStore.pillars"
       :selected-pillar="pillarStore.currentPillar"
@@ -269,7 +317,6 @@
       @submit="handleGenerateContent"
       @close="handleCloseGenerateModal"
       @pillar-change="handleGenerateModalPillarChange"
-      ref="generateModalRef"
     />
 
     <ViewContentModal
@@ -311,6 +358,7 @@ import GenerateContentModal from '@/components/content/GenerateContentModal.vue'
 import ViewContentModal from '@/components/content/ViewContentModal.vue'
 import EditContentModal from '@/components/content/EditContentModal.vue'
 import UserProfile from '@/components/settings/UserProfile.vue'
+import StudioContainer from '@/components/studio/StudioContainer.vue'
 import * as pillarService from '@/services/pillar'
 import * as resourceService from '@/services/resource'
 import * as contentService from '@/services/content'
@@ -388,6 +436,7 @@ const generateModalRef = ref<InstanceType<typeof GenerateContentModal> | null>(n
 const tabs = computed(() => {
   const baseTabs = [
     { id: 'pillars', label: 'Pillars' },
+    { id: 'resources', label: 'Resources' },
     { id: 'studio', label: 'Studio' },
     { id: 'content', label: 'Content' },
     { id: 'settings', label: 'Settings' },
@@ -419,12 +468,7 @@ const canPostToLinkedIn = computed(() => {
 
 // Load pillars, resources, content, profile, and LinkedIn on mount
 onMounted(async () => {
-  await Promise.all([
-    loadPillars(),
-    loadContents(),
-    loadUserProfile(),
-    loadLinkedInProfile()
-  ])
+  await Promise.all([loadPillars(), loadContents(), loadUserProfile(), loadLinkedInProfile()])
   // If there's a selected pillar (e.g., from page refresh), load its resources
   if (pillarStore.currentPillar) {
     await loadResources()
@@ -456,9 +500,9 @@ function handleTabChange(tabId: string) {
 async function handleSelectPillar(pillar: Pillar) {
   pillarStore.setCurrentPillar(pillar)
   appStore.setSelectedPillar(pillar)
-  // Switch to Studio tab
-  activeTab.value = 'studio'
-  appStore.setDefaultTab('studio')
+  // Switch to Resources tab
+  activeTab.value = 'resources'
+  appStore.setDefaultTab('resources')
   // Load resources for the selected pillar
   await loadResources()
 }
@@ -595,7 +639,7 @@ async function handleAddTextResource(data: { title: string; content: string }) {
     title: data.title,
     content: data.content,
     score: summaryResult.data?.score || 0,
-    advice: summaryResult.data?.advice
+    advice: summaryResult.data?.advice,
   })
 
   if (result.success && result.data) {
@@ -663,7 +707,7 @@ async function handleAddURLResource(url: string) {
     content,
     file_url: url,
     score: summaryResult.data?.score || 0,
-    advice: summaryResult.data?.advice
+    advice: summaryResult.data?.advice,
   })
 
   if (result.success && result.data) {
@@ -712,7 +756,7 @@ async function handleAddPDFResource(data: { file: File; base64: string }) {
     content,
     filename: data.file.name,
     score: summaryResult.data?.score || 0,
-    advice: summaryResult.data?.advice
+    advice: summaryResult.data?.advice,
   })
 
   if (result.success && result.data) {
@@ -749,7 +793,7 @@ async function handleAddAudioResource(transcript: string) {
     title: `Audio Recording - ${new Date().toLocaleString()}`,
     content: transcript,
     score: summaryResult.data?.score || 0,
-    advice: summaryResult.data?.advice
+    advice: summaryResult.data?.advice,
   })
 
   if (result.success && result.data) {
@@ -787,7 +831,7 @@ async function evaluatePillarWithResources() {
   if (resources.length === 0) return
 
   // Collect all resource content
-  const resourceContents = resources.map(r => r.content)
+  const resourceContents = resources.map((r) => r.content)
 
   // Evaluate the pillar with all resources
   const evaluationResult = await aiService.evaluatePillar(resourceContents)
@@ -857,7 +901,7 @@ async function handleGenerateContent(data: {
   generateError.value = null
 
   // Get the pillar
-  const pillar = pillarStore.pillars.find(p => p.id === data.pillarId)
+  const pillar = pillarStore.pillars.find((p) => p.id === data.pillarId)
   if (!pillar) {
     generateError.value = 'Pillar not found'
     generateLoading.value = false
@@ -866,10 +910,11 @@ async function handleGenerateContent(data: {
 
   // Get resources for this pillar
   const resources = resourceStore.getResourcesByPillar(data.pillarId)
-  const resourceContents = resources.map(r => r.content)
+  const resourceContents = resources.map((r) => r.content)
 
   if (resourceContents.length === 0) {
-    generateError.value = 'This pillar has no resources. Add resources first to generate quality content.'
+    generateError.value =
+      'This pillar has no resources. Add resources first to generate quality content.'
     generateLoading.value = false
     return
   }
@@ -897,7 +942,7 @@ async function handleGenerateContent(data: {
     content: generationResult.data.content,
     hook: generationResult.data.hook,
     keywords: generationResult.data.keywords,
-    visual_description: generationResult.data.visual_description
+    visual_description: generationResult.data.visual_description,
   })
 
   if (result.success && result.data) {
@@ -977,19 +1022,19 @@ async function handlePostToLinkedIn(content: Content) {
   if (!confirm(`Post "${content.title}" to LinkedIn?`)) return
 
   // Check if token is expired
-  if (linkedInProfile.value.expires_at && linkedInService.isTokenExpired(linkedInProfile.value.expires_at)) {
+  if (
+    linkedInProfile.value.expires_at &&
+    linkedInService.isTokenExpired(linkedInProfile.value.expires_at)
+  ) {
     alert('Your LinkedIn connection has expired. Please reconnect in Settings.')
     return
   }
 
   try {
-    const result = await linkedInService.postToLinkedIn(
-      linkedInProfile.value.access_token,
-      {
-        text: content.content,
-        visibility: 'PUBLIC'
-      }
-    )
+    const result = await linkedInService.postToLinkedIn(linkedInProfile.value.access_token, {
+      text: content.content,
+      visibility: 'PUBLIC',
+    })
 
     if (result.success && result.data) {
       alert(`Successfully posted to LinkedIn!\n\nYou can view it here:\n${result.data.url}`)
@@ -1083,11 +1128,13 @@ function handleLinkedInConnect() {
   linkedInError.value = null
   linkedInSuccess.value = null
 
-  const redirectUri = import.meta.env.VITE_LINKEDIN_REDIRECT_URI || `${window.location.origin}/settings`
+  const redirectUri =
+    import.meta.env.VITE_LINKEDIN_REDIRECT_URI || `${window.location.origin}/settings`
   const authUrl = linkedInService.getLinkedInAuthUrl(authStore.userId, redirectUri)
 
   if (!authUrl) {
-    linkedInError.value = 'LinkedIn Client ID not configured. Please add VITE_LINKEDIN_CLIENT_ID to your .env file.'
+    linkedInError.value =
+      'LinkedIn Client ID not configured. Please add VITE_LINKEDIN_CLIENT_ID to your .env file.'
     linkedInLoading.value = false
     return
   }
