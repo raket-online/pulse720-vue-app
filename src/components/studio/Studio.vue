@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useContentStore } from '@/stores/content'
 import { usePillarStore } from '@/stores/pillar'
 import { useResourceStore } from '@/stores/resource'
@@ -113,6 +113,7 @@ import {
   generateCarouselContent,
   generateShortVideo,
 } from '@/services/contentGenerator'
+import * as resourceService from '@/services/resource'
 
 const contentStore = useContentStore()
 const pillarStore = usePillarStore()
@@ -173,6 +174,24 @@ const contentTypeLabel = computed(() => {
 
 const canGenerate = computed(() => {
   return selectedPillarId.value && resourceCount.value > 0
+})
+
+// Load resources when pillar is selected
+watch(selectedPillarId, async (newPillarId) => {
+  if (newPillarId) {
+    resourceStore.setLoading(true)
+    resourceStore.setError(null)
+
+    const result = await resourceService.fetchResources(newPillarId)
+
+    if (result.success && result.data) {
+      resourceStore.setResources(result.data)
+    } else {
+      resourceStore.setError(result.error || 'Failed to load resources')
+    }
+
+    resourceStore.setLoading(false)
+  }
 })
 
 async function handleGenerate() {
