@@ -1,6 +1,9 @@
 /**
  * Content Generation Service
  * Handles API calls to https://api.pulse720.com/api/...
+ *
+ * Note: API configurations are centralized in src/config/generationConfig.ts
+ * This service provides the low-level API integration layer
  */
 
 const API_BASE_URL = 'https://api.pulse720.com/api'

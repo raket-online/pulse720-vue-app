@@ -1,17 +1,13 @@
 /**
  * Content Generator Orchestrator
  * Coordinates the full content generation workflow
+ *
+ * Note: Generation settings are centralized in src/config/generationConfig.ts
+ * This orchestrator focuses on the multi-step workflow logic
  */
 
-import {
-  fillTemplate,
-  SOCIAL_POST_TEMPLATE,
-  BLOG_POST_TEMPLATE,
-  CAROUSEL_TEMPLATE,
-  SHORT_VIDEO_TEMPLATE,
-  IMAGE_PRESETS,
-  type PromptPlaceholders,
-} from './prompts'
+import { fillTemplate, IMAGE_PRESETS, type PromptPlaceholders } from './prompts'
+import { getGenerationConfig, getAPIConfig } from '@/config/generationConfig'
 import {
   generateText,
   generateImage,
@@ -130,14 +126,14 @@ export async function generatePost(
     // Step 2: Generate text content
     onProgress?.({ step: 'text', progress: 30, message: 'Generating post content...' })
     const placeholders = buildPlaceholders(options, inputText)
-    const prompt = fillTemplate(SOCIAL_POST_TEMPLATE, placeholders)
+
+    // Get configuration from central config
+    const config = getGenerationConfig('post')
+    const prompt = fillTemplate(config.promptTemplate, placeholders)
 
     const textResult = await generateText({
-      provider: 'gemini',
-      model: 'gemini-2.5-pro',
+      ...getAPIConfig('post'),
       prompt,
-      temperature: 1.0,
-      max_tokens: 5000,
     })
 
     console.log('Post text generation result:', textResult)
@@ -233,14 +229,14 @@ export async function generateBlog(
     // Step 2: Generate text content
     onProgress?.({ step: 'text', progress: 30, message: 'Generating blog content...' })
     const placeholders = buildPlaceholders(options, inputText)
-    const prompt = fillTemplate(BLOG_POST_TEMPLATE, placeholders)
+
+    // Get configuration from central config
+    const config = getGenerationConfig('blog')
+    const prompt = fillTemplate(config.promptTemplate, placeholders)
 
     const textResult = await generateText({
-      provider: 'gemini',
-      model: 'gemini-2.5-pro',
+      ...getAPIConfig('blog'),
       prompt,
-      temperature: 1.0,
-      max_tokens: 5000,
     })
 
     console.log('Blog text generation result:', textResult)
@@ -328,14 +324,14 @@ export async function generateCarouselContent(
     // Step 2: Generate carousel content
     onProgress?.({ step: 'text', progress: 30, message: 'Generating carousel slides...' })
     const placeholders = buildPlaceholders(options, inputText)
-    const prompt = fillTemplate(CAROUSEL_TEMPLATE, placeholders)
+
+    // Get configuration from central config
+    const config = getGenerationConfig('carousel')
+    const prompt = fillTemplate(config.promptTemplate, placeholders)
 
     const textResult = await generateText({
-      provider: 'gemini',
-      model: 'gemini-2.5-pro',
+      ...getAPIConfig('carousel'),
       prompt,
-      temperature: 1.0,
-      max_tokens: 5000,
     })
 
     if (!textResult.success || !textResult.data) {
@@ -403,14 +399,14 @@ export async function generateShortVideo(
     // Step 2: Generate transcript
     onProgress?.({ step: 'text', progress: 15, message: 'Generating video transcript...' })
     const placeholders = buildPlaceholders(options, inputText)
-    const prompt = fillTemplate(SHORT_VIDEO_TEMPLATE, placeholders)
+
+    // Get configuration from central config
+    const config = getGenerationConfig('shortvideo')
+    const prompt = fillTemplate(config.promptTemplate, placeholders)
 
     const textResult = await generateText({
-      provider: 'gemini',
-      model: 'gemini-2.5-pro',
+      ...getAPIConfig('shortvideo'),
       prompt,
-      temperature: 1.0,
-      max_tokens: 5000,
     })
 
     if (!textResult.success || !textResult.data) {
