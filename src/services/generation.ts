@@ -22,6 +22,7 @@ export interface TextGenerationParams {
   prompt: string
   temperature?: number
   max_tokens?: number
+  json_format?: boolean
 }
 
 export interface PostGenerationResult {
@@ -78,19 +79,30 @@ export async function generateText(
   params: TextGenerationParams
 ): Promise<GenerationServiceResult<any>> {
   try {
+    const requestBody = {
+      provider: params.provider || 'gemini',
+      model: params.model || 'gemini-2.5-pro',
+      prompt: params.prompt,
+      temperature: params.temperature ?? 1.0,
+      max_tokens: params.max_tokens || 5000,
+      json_format: params.json_format ?? true,
+    }
+
+    console.log('Sending completion request with params:', {
+      provider: requestBody.provider,
+      model: requestBody.model,
+      temperature: requestBody.temperature,
+      max_tokens: requestBody.max_tokens,
+      json_format: requestBody.json_format,
+      promptLength: requestBody.prompt.length,
+    })
+
     const response = await fetch(`${API_BASE_URL}/completion`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        provider: params.provider || 'gemini',
-        model: params.model || 'gemini-2.5-pro',
-        prompt: params.prompt,
-        temperature: params.temperature ?? 1.0,
-        max_tokens: params.max_tokens || 5000,
-        json_format: true,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {
@@ -190,12 +202,13 @@ export async function generateImage(
 
 /**
  * Generate quick image using FAL AI (flux/schnell)
+ * Note: Uses same /api/image endpoint with flux/schnell model for faster generation
  */
 export async function generateImageQuick(
   params: ImageGenerationParams
 ): Promise<GenerationServiceResult<ImageGenerationResult>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/image-quick`, {
+    const response = await fetch(`${API_BASE_URL}/image`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
